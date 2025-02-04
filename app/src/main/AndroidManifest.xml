@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- This is necessary due to a known issue causing a higher minSDK than intended -->
+    <!-- copy/paste this from github sample, but in this project i set min sdk to 34 -->
+    <uses-sdk tools:overrideLibrary="androidx.xr.scenecore, androidx.xr.compose"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,17 +15,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.XRExp"
-        tools:targetApi="31">
+        tools:targetApi="31"
+        tools:ignore="ObsoleteSdkInt">
+
+        <!-- TODO: Play with this property and understand what it's doing -->
+        <property
+            android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
+            android:value="XR_ACTIVITY_START_MODE_HOME_SPACE_MANAGED" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.XRExp">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
