@@ -9,6 +9,7 @@ lifecycleRuntimeKtx = "2.8.7"
 lifecycleRuntimeCompose = "2.8.7"
 lifecycleViewmodelCompose = "2.8.7"
 activityCompose = "1.10.0"
+material3 = "1.0.0-alpha02"
 runtime = "1.8.0-beta01"
 composeBom = "2025.01.01"
 ui = "1.8.0-beta01"
@@ -17,9 +18,11 @@ runtimeVersion = "1.0.0-alpha01"
 scenecore = "1.0.0-alpha01"
 impress = "0.0.1"
 arcore = "1.0.0-alpha01"
+material3XR = "1.0.0-alpha02"
 
+kotlinxCoroutinesGuava = "1.9.0"
 
-concurrentFuturesKtx = "1.2.0" # TODO - not used
+concurrentFuturesKtx = "1.2.0"
 material = "1.12.0" # TODO - not used
 screenshot = "0.0.1-alpha08" # TODO - not used
 adaptiveAndroid = "1.0.0" # TODO - not used
@@ -27,10 +30,11 @@ adaptiveAndroid = "1.0.0" # TODO - not used
 [libraries]
 
 # not used
-androidx-concurrent-futures = { module = "androidx.concurrent:concurrent-futures-ktx", version.ref = "concurrentFuturesKtx" } # TODO - not used
+androidx-concurrent-futures = { module = "androidx.concurrent:concurrent-futures-ktx", version.ref = "concurrentFuturesKtx" }
 material = { module = "com.google.android.material:material", version.ref = "material" } # TODO - not used
 androidx-adaptive-android = { group = "androidx.compose.material3.adaptive", name = "adaptive-android", version.ref = "adaptiveAndroid" } # TODO - not used
-
+#
+kotlinx-coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-guava", version.ref = "kotlinxCoroutinesGuava" }
 
 # androidx
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -51,6 +55,7 @@ androidx-xr-compose = { group = "androidx.xr.compose", name = "compose", version
 androidx-xr-runtime = { group = "androidx.xr.runtime", name = "runtime", version.ref = "runtimeVersion" }
 androidx-xr-scenecore = { group = "androidx.xr.scenecore", name = "scenecore", version.ref = "scenecore" }
 androidx-xr-arcore = { module = "androidx.xr.arcore:arcore", version.ref = "arcore" }
+androidx-xr-material3 = { module = "androidx.xr.compose.material3:material3", version.ref = "material3XR" }
 
 # ar
 google-ar-impress = { module = "com.google.ar:impress", version.ref = "impress" }
@@ -61,6 +66,7 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -61,12 +61,16 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.concurrent.futures)
+    implementation(libs.kotlinx.coroutines.guava)
 
     // XR
     implementation(libs.androidx.xr.compose)
     implementation(libs.androidx.xr.runtime)
     implementation(libs.androidx.xr.scenecore)
     implementation(libs.androidx.xr.arcore)
+    implementation(libs.androidx.xr.material3)
+
 
     // Testing
     testImplementation(libs.junit)
