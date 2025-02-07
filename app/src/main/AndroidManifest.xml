@@ -30,7 +30,7 @@
             android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED" />
 
         <activity
-            android:name=".Main3DActivity"
+            android:name=".Main3DAnimActivity"
             android:exported="true"
             android:theme="@style/Theme.XRExp">
             <intent-filter>
