@@ -19,16 +19,16 @@
         tools:ignore="ObsoleteSdkInt">
 
         <!-- TODO: Play with this property and understand what it's doing -->
-        <property
-            android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
-            android:value="XR_ACTIVITY_START_MODE_HOME_SPACE_MANAGED" />
-
 <!--        <property-->
 <!--            android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"-->
-<!--            android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED" />-->
+<!--            android:value="XR_ACTIVITY_START_MODE_HOME_SPACE_MANAGED" />-->
+
+        <property
+            android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
+            android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".Main3DActivity"
             android:exported="true"
             android:theme="@style/Theme.XRExp">
             <intent-filter>
