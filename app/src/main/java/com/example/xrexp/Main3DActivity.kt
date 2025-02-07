@@ -57,7 +57,7 @@ class Main3DActivity : ComponentActivity() {
 
     }
 
-    val GLB_FILE_NAME = "animated_robot.glb"
+    val GLB_FILE_NAME = "shiba_inu_texture_updated.glb"
 
     @Composable
     fun ModelInsideVolume(session: Session, scope: CoroutineScope) {
@@ -83,6 +83,7 @@ class Main3DActivity : ComponentActivity() {
                         val lf = session.createGltfResourceAsync(GLB_FILE_NAME)
                         val model = lf.await()
                         val modelEntity = session.createGltfEntity(model)
+                        modelEntity.startAnimation(loop = true)
                         it.addChild(modelEntity)
                     }
                 }

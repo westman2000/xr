@@ -18,11 +18,13 @@
         tools:targetApi="31"
         tools:ignore="ObsoleteSdkInt">
 
-        <!-- TODO: Play with this property and understand what it's doing -->
+        <!-- This will start app in HOME space mode by default at beginning -->
+        <!-- https://developer.android.com/develop/xr/jetpack-xr-sdk/transition-home-space-to-full-space#declare-default-mode -->
 <!--        <property-->
 <!--            android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"-->
 <!--            android:value="XR_ACTIVITY_START_MODE_HOME_SPACE_MANAGED" />-->
 
+        <!-- This will start app in FULL space mode by default at beginning -->
         <property
             android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
             android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED" />
