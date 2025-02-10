@@ -38,6 +38,8 @@ import androidx.xr.compose.subspace.layout.height
 import androidx.xr.compose.subspace.layout.movable
 import androidx.xr.compose.subspace.layout.resizable
 import androidx.xr.compose.subspace.layout.width
+import com.example.xrexp.ui.FullSpaceModeIconButton
+import com.example.xrexp.ui.HomeSpaceModeIconButton
 import com.example.xrexp.ui.theme.XRExpTheme
 
 class MainActivity : ComponentActivity() {
@@ -109,26 +111,6 @@ fun My2DContent(onRequestFullSpaceMode: () -> Unit) {
 @Composable
 fun MainContent(modifier: Modifier = Modifier) {
     Text(text = stringResource(R.string.hello_android_xr), modifier = modifier)
-}
-
-@Composable
-fun FullSpaceModeIconButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    IconButton(onClick = onClick, modifier = modifier) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_full_space_mode_switch),
-            contentDescription = stringResource(R.string.switch_to_full_space_mode)
-        )
-    }
-}
-
-@Composable
-fun HomeSpaceModeIconButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    FilledTonalIconButton(onClick = onClick, modifier = modifier) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_home_space_mode_switch),
-            contentDescription = stringResource(R.string.switch_to_home_space_mode)
-        )
-    }
 }
 
 @PreviewLightDark
