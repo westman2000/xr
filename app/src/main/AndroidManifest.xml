@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- For video stream -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <!-- This is necessary due to a known issue causing a higher minSDK than intended -->
     <!-- copy/paste this from github sample, but in this project i set min sdk to 34 -->
     <uses-sdk tools:overrideLibrary="androidx.xr.scenecore, androidx.xr.compose"/>

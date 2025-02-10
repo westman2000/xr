@@ -62,6 +62,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.concurrent.futures)
+    // media3
+    implementation("androidx.media3:media3-exoplayer:1.5.1")
 
     // jetbrains
     implementation(libs.kotlinx.coroutines.guava)

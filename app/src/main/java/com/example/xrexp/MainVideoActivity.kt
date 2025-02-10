@@ -6,18 +6,22 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.xr.compose.platform.LocalHasXrSpatialFeature
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.LocalSpatialCapabilities
@@ -34,9 +38,24 @@ import androidx.xr.compose.subspace.layout.resizable
 import androidx.xr.compose.subspace.layout.width
 import com.example.xrexp.ui.FullSpaceModeIconButton
 import com.example.xrexp.ui.HomeSpaceModeIconButton
+import com.example.xrexp.ui.SURFACE_TYPE_SURFACE_VIEW
+import com.example.xrexp.ui.VideoPlayerSurface
 import com.example.xrexp.ui.theme.XRExpTheme
 
 class MainVideoActivity : ComponentActivity() {
+
+    companion object {
+        val videos =
+            listOf(
+                "https://cdn.bitmovin.com/content/assets/playhouse-vr/progressive.mp4",
+                "https://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_720p_h264.mov",
+                "https://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_h264.mov",
+                "https://download.blender.org/peach/bigbuckbunny_movies/big_buck_bunny_1080p_surround.avi",
+                "https://html5demos.com/assets/dizzy.mp4",
+                "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/gear0/fileSequence0.aac",
+                "https://storage.googleapis.com/exoplayer-test-media-1/gen-3/screens/dash-vod-single-segment/video-vp9-360.webm",
+            )
+    }
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +75,6 @@ class MainVideoActivity : ComponentActivity() {
             }
         }
     }
-
 
     @SuppressLint("RestrictedApi")
     @Composable
@@ -104,6 +122,27 @@ class MainVideoActivity : ComponentActivity() {
 
     @Composable
     fun VideoMainContent(modifier: Modifier = Modifier) {
-        Text(text = stringResource(R.string.hello_video_android_xr), modifier = modifier)
+        Surface {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                val context = LocalContext.current
+                val exoPlayer = remember {
+                    ExoPlayer.Builder(context).build().apply {
+                        setMediaItem(MediaItem.fromUri(videos[0]))
+                        prepare()
+                        playWhenReady = true
+                        repeatMode = Player.REPEAT_MODE_ONE
+                    }
+                }
+                VideoPlayerSurface(
+                    player = exoPlayer,
+                    surfaceType = SURFACE_TYPE_SURFACE_VIEW,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                )
+            }
+        }
     }
+
 }
