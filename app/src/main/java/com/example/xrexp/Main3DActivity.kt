@@ -1,14 +1,22 @@
 package com.example.xrexp
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,12 +24,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.concurrent.futures.await
 import androidx.xr.compose.platform.LocalSession
+import androidx.xr.compose.platform.SpatialCapabilities
 import androidx.xr.compose.spatial.Orbiter
 import androidx.xr.compose.spatial.OrbiterEdge
 import androidx.xr.compose.spatial.Subspace
@@ -34,6 +46,7 @@ import androidx.xr.compose.subspace.layout.rotate
 import androidx.xr.compose.subspace.layout.scale
 import androidx.xr.compose.subspace.layout.width
 import androidx.xr.scenecore.Session
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_3D_CONTENT
 import com.example.xrexp.ui.theme.XRExpTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -41,30 +54,35 @@ import kotlinx.coroutines.launch
 
 class Main3DActivity : ComponentActivity() {
 
+    companion object {
+        const val GLB_FILE_NAME = "animated_robot.glb"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val session = LocalSession.current
-            val scope = rememberCoroutineScope()
-            XRExpTheme {
-                ModelInsideVolume(
-                    scope = scope,
-                    session = session!!
-                )
+            LocalSession.current?.let { session ->
+                val scope = rememberCoroutineScope()
+                XRExpTheme {
+                    ModelInsideVolume(
+                        xrSession = session,
+                        spatialCapabilities = SpatialCapabilities.getOrCreate(session),
+                        scope = scope
+                    )
+                }
             }
         }
-
     }
 
-    val GLB_FILE_NAME = "animated_robot.glb"
-
     @Composable
-    fun ModelInsideVolume(session: Session, scope: CoroutineScope) {
+    fun ModelInsideVolume(
+        xrSession: Session, spatialCapabilities : SpatialCapabilities, scope: CoroutineScope
+    ) {
         Subspace {
             SpatialColumn {
+                val context = LocalContext.current
                 Volume(
-
                     /*
                      * the order in which Jetpack Composer’s modifier functions are called for
                      * SubspaceModifier of a Volume is very important in the Android XR app.
@@ -77,14 +95,19 @@ class Main3DActivity : ComponentActivity() {
                      *   .movable()                 // must occur last
                      *   .resizable()               // must occur last
                      */
-
                     modifier = SubspaceModifier.offset(z = (-2000).dp).scale(0.5f).resizable()
                 ) {
                     scope.launch {
-                        val lf = session.createGltfResourceAsync(GLB_FILE_NAME)
-                        val model = lf.await()
-                        val modelEntity = session.createGltfEntity(model)
-                        it.addChild(modelEntity)
+                        val gltfModel = xrSession.createGltfResourceAsync(GLB_FILE_NAME).await()
+
+                        // check for spatial capabilities
+                        if (spatialCapabilities.isContent3dEnabled){
+                            // create the gltf entity using the gltf file from the previous snippet
+                            val gltfEntity = xrSession.createGltfEntity(gltfModel)
+                            it.addChild(gltfEntity)
+                        } else {
+                            Toast.makeText(context, "3D content not enabled", Toast.LENGTH_LONG).show()
+                        }
                     }
                 }
                 SpatialPanel(
@@ -101,7 +124,7 @@ class Main3DActivity : ComponentActivity() {
         Orbiter(
             alignment = Alignment.CenterHorizontally,
             offset = 100.dp,
-            position = OrbiterEdge.Bottom,
+            position = OrbiterEdge.Top,
         ) {
             Surface(
                 Modifier
@@ -109,7 +132,7 @@ class Main3DActivity : ComponentActivity() {
             ) {
                 Row(
                     Modifier
-                        .width(450.dp)
+                        .width(500.dp)
                         .height(100.dp)
                         .background(Color(0.25f, 0.0f, 0.0f)),
                     horizontalArrangement = Arrangement.Center,
@@ -121,8 +144,27 @@ class Main3DActivity : ComponentActivity() {
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 6.em
                     )
+                    Button(
+                        onClick = { openSceneViewer() },
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text("Button")
+                    }
                 }
             }
         }
+    }
+
+    private fun openSceneViewer() {
+        val THREED_MODEL_URL = "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/FlightHelmet/glTF/FlightHelmet.gltf"
+        val MIME_TYPE = "model/gltf-binary"
+        val sceneViewerIntent = Intent(Intent.ACTION_VIEW)
+        val intentUri =
+            Uri.parse("https://arvr.google.com/scene-viewer/1.2")
+                .buildUpon()
+                .appendQueryParameter("file", THREED_MODEL_URL)
+                .build()
+        sceneViewerIntent.setDataAndType(intentUri, MIME_TYPE)
+        startActivity(sceneViewerIntent)
     }
 }

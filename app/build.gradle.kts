@@ -41,8 +41,6 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.4"
     }
-    @Suppress("UnstableApiUsage")
-    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 dependencies {
@@ -63,7 +61,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.concurrent.futures)
     // media3
-    implementation("androidx.media3:media3-exoplayer:1.5.1")
+    implementation(libs.androidx.media3.exoplayer)
 
     // jetbrains
     implementation(libs.kotlinx.coroutines.guava)
@@ -78,6 +76,12 @@ dependencies {
 
     // Testing
     testImplementation(libs.junit)
+    // Use to write unit tests
+    testImplementation(libs.androidx.scenecore.testing)
+    // Use to write unit tests
+    testImplementation(libs.androidx.compose.testing)
+    // Use in environments that do not support OpenXR
+    testImplementation(libs.androidx.runtime.testing)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

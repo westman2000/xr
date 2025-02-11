@@ -5,6 +5,9 @@
     <!-- For video stream -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- Jetpack XR apps required to request https://bit.ly/40Sv3Cq -->
+    <uses-permission android:name="android.permission.SCENE_UNDERSTANDING" />
+
     <!-- This is necessary due to a known issue causing a higher minSDK than intended -->
     <!-- copy/paste this from github sample, but in this project i set min sdk to 34 -->
     <uses-sdk tools:overrideLibrary="androidx.xr.scenecore, androidx.xr.compose"/>
@@ -21,19 +24,21 @@
         tools:targetApi="31"
         tools:ignore="ObsoleteSdkInt">
 
-        <!-- This will start app in HOME space mode by default at beginning -->
-        <!-- https://developer.android.com/develop/xr/jetpack-xr-sdk/transition-home-space-to-full-space#declare-default-mode -->
-        <property
-            android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
-            android:value="XR_ACTIVITY_START_MODE_HOME_SPACE_MANAGED" />
-
-        <!-- This will start app in FULL space mode by default at beginning -->
+        <!-- This will start app in HOME space mode by default at beginning (https://bit.ly/3CB1q0p) -->
 <!--        <property-->
 <!--            android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"-->
-<!--            android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED" />-->
+<!--            android:value="XR_ACTIVITY_START_MODE_HOME_SPACE_MANAGED" />-->
+
+        <!-- This will start app in FULL space mode by default at beginning -->
+        <!-- Known Issues: When an app launches directly into Full Space using the
+        PROPERTY_XR_ACTIVITY_START_MODE property in their manifest, Activities/Applications
+        are initially opened in Home Space before transitioning into Full Space. -->
+        <property
+            android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
+            android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED" />
 
         <activity
-            android:name=".MainVideoActivity"
+            android:name=".Main3DActivity"
             android:exported="true"
             android:theme="@style/Theme.XRExp">
             <intent-filter>

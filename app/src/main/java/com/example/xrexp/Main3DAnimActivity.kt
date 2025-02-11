@@ -96,7 +96,7 @@ class Main3DAnimActivity : ComponentActivity() {
                 modelEntity.setScale(1.5f)
 
                 // Playing and stopping Animation
-                modelEntity.startAnimation(false, "sitting_skeletal.3")
+                modelEntity.startAnimation(loop = false, animationName = "sitting_skeletal.3")
                 modelEntity.stopAnimation()
 
                 // Setting an Interactable Component
@@ -164,16 +164,16 @@ class Main3DAnimActivity : ComponentActivity() {
                 Modifier.width(IntrinsicSize.Min)
             ) {
                 ButtonPrototype(tint = Color.Magenta) {
-                    GLB.startAnimation(true, "standing_skeletal.3")
+                    GLB.startAnimation(loop = true, animationName = "standing_skeletal.3")
                 }
                 ButtonPrototype(tint = Color.Green) {
-                    GLB.startAnimation(true, "rollover_skeletal.3")
+                    GLB.startAnimation(loop = true, animationName = "rollover_skeletal.3")
                 }
                 ButtonPrototype(tint = Color.Yellow) {
-                    GLB.startAnimation(true, "shake_skeletal.3")
+                    GLB.startAnimation(loop = true, animationName = "shake_skeletal.3")
                 }
                 ButtonPrototype(tint = Color.Cyan) {
-                    GLB.startAnimation(true, "play_dead_skeletal.3")
+                    GLB.startAnimation(loop = true, animationName = "play_dead_skeletal.3")
                 }
             }
         }

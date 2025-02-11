@@ -1,5 +1,6 @@
 [versions]
 agp = "8.10.0-alpha04"
+composeTesting = "1.0.0-alpha01"
 kotlin = "2.0.21"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -10,12 +11,15 @@ lifecycleRuntimeCompose = "2.8.7"
 lifecycleViewmodelCompose = "2.8.7"
 activityCompose = "1.10.0"
 material3 = "1.0.0-alpha02"
+media3Exoplayer = "1.5.1"
 runtime = "1.8.0-beta01"
 composeBom = "2025.01.01"
+runtimeTesting = "1.0.0-alpha01"
 ui = "1.8.0-beta01"
 compose = "1.0.0-alpha01"
 runtimeVersion = "1.0.0-alpha01"
 scenecore = "1.0.0-alpha01"
+scenecoreTesting = "1.0.0-alpha01"
 impress = "0.0.1"
 arcore = "1.0.0-alpha01"
 material3XR = "1.0.0-alpha02"
@@ -51,6 +55,8 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-concurrent-futures = { module = "androidx.concurrent:concurrent-futures-ktx", version.ref = "concurrentFuturesKtx" }
+# androidx media3
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
 
 # androidx XR
 androidx-xr-compose = { group = "androidx.xr.compose", name = "compose", version.ref = "compose" }
@@ -64,6 +70,9 @@ google-ar-impress = { module = "com.google.ar:impress", version.ref = "impress" 
 
 # test
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-scenecore-testing = { module = "androidx.xr.scenecore:scenecore-testing", version.ref = "scenecoreTesting" }
+androidx-compose-testing = { module = "androidx.xr.compose:compose-testing", version.ref = "composeTesting" }
+androidx-runtime-testing = { module = "androidx.xr.runtime:runtime-testing", version.ref = "runtimeTesting" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
