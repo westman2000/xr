@@ -58,8 +58,25 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
     implementation(libs.androidx.concurrent.futures)
+
+    // material icons
+    implementation("androidx.compose.material:material-icons-core:1.7.7")
+    // material3
+    implementation(libs.androidx.material3)
+    // material3 Adaptive (CAMAL) dependencies
+
+    implementation("androidx.compose.material3.adaptive:adaptive:1.1.0-beta01")
+    implementation("androidx.compose.material3.adaptive:adaptive-layout:1.1.0-beta01")
+    implementation("androidx.compose.material3.adaptive:adaptive-navigation:1.1.0-beta01")
+    implementation("androidx.compose.material3.adaptive:adaptive-navigation:1.1.0-beta01")
+    // https://mvnrepository.com/artifact/androidx.compose.material3/material3-adaptive-navigation-suite-android
+    implementation("androidx.compose.material3:material3-adaptive-navigation-suite-android:1.4.0-alpha07")
+
+//    implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.4.0-alpha07")
+
+
+
     // media3
     implementation(libs.androidx.media3.exoplayer)
 

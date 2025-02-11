@@ -25,20 +25,20 @@
         tools:ignore="ObsoleteSdkInt">
 
         <!-- This will start app in HOME space mode by default at beginning (https://bit.ly/3CB1q0p) -->
-<!--        <property-->
-<!--            android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"-->
-<!--            android:value="XR_ACTIVITY_START_MODE_HOME_SPACE_MANAGED" />-->
+        <property
+            android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
+            android:value="XR_ACTIVITY_START_MODE_HOME_SPACE_MANAGED" />
 
         <!-- This will start app in FULL space mode by default at beginning -->
         <!-- Known Issues: When an app launches directly into Full Space using the
         PROPERTY_XR_ACTIVITY_START_MODE property in their manifest, Activities/Applications
         are initially opened in Home Space before transitioning into Full Space. -->
-        <property
-            android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
-            android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED" />
+<!--        <property-->
+<!--            android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"-->
+<!--            android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED" />-->
 
         <activity
-            android:name=".Main3DActivity"
+            android:name=".m3.M3MainActivity"
             android:exported="true"
             android:theme="@style/Theme.XRExp">
             <intent-filter>
