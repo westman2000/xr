@@ -38,7 +38,7 @@
 <!--            android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED" />-->
 
         <activity
-            android:name=".m3.M3MainActivity"
+            android:name=".LauncherActivity"
             android:exported="true"
             android:theme="@style/Theme.XRExp">
             <intent-filter>
@@ -46,6 +46,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".MainActivity"/>
+        <activity android:name=".Main3DActivity"/>
+        <activity android:name=".Main3DAnimActivity"/>
+        <activity android:name=".MainVideoActivity"/>
+        <activity android:name=".m3.M3MainActivity"/>
 
     </application>
 
