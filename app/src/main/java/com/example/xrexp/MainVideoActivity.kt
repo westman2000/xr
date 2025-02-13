@@ -64,13 +64,13 @@ class MainVideoActivity : ComponentActivity() {
 
         setContent {
             XRExpTheme {
-                val session = LocalSession.current
+                val session = LocalSession.current!!
                 if (LocalSpatialCapabilities.current.isSpatialUiEnabled) {
                     Subspace {
-                        VideoSpatialContent(onRequestHomeSpaceMode = { session?.requestHomeSpaceMode() })
+                        VideoSpatialContent(onRequestHomeSpaceMode = { session.spatialEnvironment.requestHomeSpaceMode() })
                     }
                 } else {
-                    Video2DContent(onRequestFullSpaceMode = { session?.requestFullSpaceMode() })
+                    Video2DContent(onRequestFullSpaceMode = { session.spatialEnvironment.requestFullSpaceMode() })
                 }
             }
         }
@@ -130,7 +130,7 @@ class MainVideoActivity : ComponentActivity() {
                 val context = LocalContext.current
                 val exoPlayer = remember {
                     ExoPlayer.Builder(context).build().apply {
-                        setMediaItem(MediaItem.fromUri(videos[0]))
+                        setMediaItem(MediaItem.fromUri(videos[1]))
                         prepare()
                         playWhenReady = true
                         repeatMode = Player.REPEAT_MODE_ONE

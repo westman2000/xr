@@ -50,6 +50,8 @@ import androidx.xr.scenecore.Session
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.GltfModel
+import androidx.xr.scenecore.InteractableComponent
 import java.util.concurrent.Executors
 
 
@@ -74,46 +76,45 @@ class Main3DAnimActivity : ComponentActivity() {
     }
 
     @Composable
-    fun AnimatedSceneInFullSpace(session: Session) {
-        val root: Entity = session.activitySpaceRoot
+    fun AnimatedSceneInFullSpace(xrSession: Session) {
+        val root: Entity = xrSession.activitySpaceRoot
         val executor by lazy { Executors.newSingleThreadExecutor() }
 
         Subspace {
             LaunchedEffect(Unit) {
                 // Model Loading
-                val lf = session.createGltfResourceAsync(GLB_FILE_NAME)
-                val model = lf.await()
-                val modelEntity = session.createGltfEntity(model)
+                val gltfModel = GltfModel.create(xrSession, GLB_FILE_NAME).await()
+                val gltfEntity = GltfModelEntity.create(xrSession, gltfModel)
 
                 // Global pty initialization
-                GLB = modelEntity
+                GLB = gltfEntity
 
                 // Transformations
                 val translation = Vector3(0.5f, -2.7f, -2.4f)
                 val orientation = Quaternion.fromEulerAngles(0f, -90f, 0f)
                 val pose = Pose(translation, orientation)
-                modelEntity.setPose(pose)
-                modelEntity.setScale(1.5f)
+                gltfEntity.setPose(pose)
+                gltfEntity.setScale(1.5f)
 
                 // Playing and stopping Animation
-                modelEntity.startAnimation(loop = false, animationName = "sitting_skeletal.3")
-                modelEntity.stopAnimation()
+                gltfEntity.startAnimation(loop = false, animationName = "sitting_skeletal.3")
+                gltfEntity.stopAnimation()
 
                 // Setting an Interactable Component
-                val interactable = session.createInteractableComponent(executor) { ie ->
+                val interactable = InteractableComponent.create(xrSession, executor) { ie ->
                     when (ie.action) {
                         InputEvent.ACTION_HOVER_ENTER -> {
-                            modelEntity.setScale(2.7f)
-                            println(modelEntity.getScale())
+                            gltfEntity.setScale(2.7f)
+                            println(gltfEntity.getScale())
                         }
                         InputEvent.ACTION_HOVER_EXIT -> {
-                            modelEntity.setScale(1.5f)
-                            println(modelEntity.getScale())
+                            gltfEntity.setScale(1.5f)
+                            println(gltfEntity.getScale())
                         }
                     }
                 }
-                modelEntity.addComponent(interactable)
-                modelEntity.setParent(root)
+                gltfEntity.addComponent(interactable)
+                gltfEntity.setParent(root)
             }
             SpatialPanel(
                 SubspaceModifier

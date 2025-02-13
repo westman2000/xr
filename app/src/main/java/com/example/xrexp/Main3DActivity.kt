@@ -45,6 +45,8 @@ import androidx.xr.compose.subspace.layout.resizable
 import androidx.xr.compose.subspace.layout.rotate
 import androidx.xr.compose.subspace.layout.scale
 import androidx.xr.compose.subspace.layout.width
+import androidx.xr.scenecore.GltfModel
+import androidx.xr.scenecore.GltfModelEntity
 import androidx.xr.scenecore.Session
 import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_3D_CONTENT
 import com.example.xrexp.ui.theme.XRExpTheme
@@ -98,12 +100,11 @@ class Main3DActivity : ComponentActivity() {
                     modifier = SubspaceModifier.offset(z = (-2000).dp).scale(0.5f).resizable()
                 ) {
                     scope.launch {
-                        val gltfModel = xrSession.createGltfResourceAsync(GLB_FILE_NAME).await()
-
+                        val gltfModel = GltfModel.create(xrSession, GLB_FILE_NAME).await()
                         // check for spatial capabilities
                         if (spatialCapabilities.isContent3dEnabled){
                             // create the gltf entity using the gltf file from the previous snippet
-                            val gltfEntity = xrSession.createGltfEntity(gltfModel)
+                            val gltfEntity = GltfModelEntity.create(xrSession, gltfModel)
                             it.addChild(gltfEntity)
                         } else {
                             Toast.makeText(context, "3D content not enabled", Toast.LENGTH_LONG).show()

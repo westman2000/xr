@@ -51,13 +51,13 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             XRExpTheme {
-                val session = LocalSession.current
+                val session = LocalSession.current!!
                 if (LocalSpatialCapabilities.current.isSpatialUiEnabled) {
                     Subspace {
-                        MySpatialContent(onRequestHomeSpaceMode = { session?.requestHomeSpaceMode() })
+                        MySpatialContent(onRequestHomeSpaceMode = { session.spatialEnvironment.requestHomeSpaceMode() })
                     }
                 } else {
-                    My2DContent(onRequestFullSpaceMode = { session?.requestFullSpaceMode() })
+                    My2DContent(onRequestFullSpaceMode = { session.spatialEnvironment.requestFullSpaceMode() })
                 }
             }
         }

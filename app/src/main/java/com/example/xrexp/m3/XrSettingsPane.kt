@@ -52,7 +52,7 @@ internal fun XrSettingsPane(
 
 @Composable
 private fun XrModeButton() {
-    val session = LocalSession.current
+    val session = LocalSession.current!!
     val isDeviceXr = session != null
     val isFullSpaceMode = LocalSpatialCapabilities.current.isSpatialUiEnabled
 
@@ -61,9 +61,9 @@ private fun XrModeButton() {
         enabled = isDeviceXr,
         onClick = {
             if (isFullSpaceMode) {
-                session!!.requestHomeSpaceMode()
+                session.spatialEnvironment.requestHomeSpaceMode()
             } else {
-                session!!.requestFullSpaceMode()
+                session.spatialEnvironment.requestFullSpaceMode()
             }
         },
     ) {

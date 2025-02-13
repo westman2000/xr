@@ -1,5 +1,6 @@
 [versions]
 agp = "8.6.1"
+#noinspection GradleDependency
 kotlin = "2.0.21"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -11,22 +12,21 @@ lifecycleViewmodelCompose = "2.8.7"
 activityCompose = "1.10.0"
 material3 = "1.0.0-alpha02"
 media3Exoplayer = "1.5.1"
-runtime = "1.8.0-beta01"
-composeBom = "2025.01.01"
-composeTesting = "1.0.0-alpha01"
-runtimeTesting = "1.0.0-alpha01"
-ui = "1.8.0-beta01"
-compose = "1.0.0-alpha01"
-runtimeVersion = "1.0.0-alpha01"
-scenecore = "1.0.0-alpha01"
-scenecoreTesting = "1.0.0-alpha01"
-impress = "0.0.1"
-arcore = "1.0.0-alpha01"
-material3XR = "1.0.0-alpha02"
+runtime = "1.8.0-beta02"
+composeBom = "2025.02.00"
+ui = "1.8.0-beta02"
 concurrentFuturesKtx = "1.2.0"
-
 kotlinxCoroutinesGuava = "1.10.1"
 
+compose             = "1.0.0-alpha02"
+runtimeVersion      = "1.0.0-alpha02"
+scenecore           = "1.0.0-alpha02"
+impress             = "0.0.2"
+arcore              = "1.0.0-alpha02"
+material3XR         = "1.0.0-alpha03"
+composeTesting      = "1.0.0-alpha02"
+runtimeTesting      = "1.0.0-alpha02"
+scenecoreTesting    = "1.0.0-alpha02"
 
 material = "1.12.0" # TODO - not used
 screenshot = "0.0.1-alpha08" # TODO - not used
