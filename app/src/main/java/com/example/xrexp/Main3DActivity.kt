@@ -3,6 +3,7 @@ package com.example.xrexp
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,9 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,10 +22,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
@@ -42,13 +38,19 @@ import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.height
 import androidx.xr.compose.subspace.layout.offset
 import androidx.xr.compose.subspace.layout.resizable
-import androidx.xr.compose.subspace.layout.rotate
 import androidx.xr.compose.subspace.layout.scale
 import androidx.xr.compose.subspace.layout.width
 import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
 import androidx.xr.scenecore.Session
 import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_3D_CONTENT
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_APP_ENVIRONMENT
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_EMBED_ACTIVITY
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_SPATIAL_AUDIO
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_UI
+import androidx.xr.scenecore.addSpatialCapabilitiesChangedListener
+import androidx.xr.scenecore.getSpatialCapabilities
 import com.example.xrexp.ui.theme.XRExpTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -57,6 +59,7 @@ import kotlinx.coroutines.launch
 class Main3DActivity : ComponentActivity() {
 
     companion object {
+        const val TAG = "Main3DActivity"
         const val GLB_FILE_NAME = "animated_robot.glb"
     }
 
@@ -65,6 +68,18 @@ class Main3DActivity : ComponentActivity() {
 
         setContent {
             LocalSession.current?.let { session ->
+
+                val c = session.getSpatialCapabilities()
+
+                Log.d(TAG, "SpatialCapabilities: \n" +
+                        "SPATIAL_CAPABILITY_UI:${c.hasCapability(SPATIAL_CAPABILITY_UI)}\n" +
+                        "SPATIAL_CAPABILITY_3D_CONTENT:${c.hasCapability(SPATIAL_CAPABILITY_3D_CONTENT)}\n" +
+                        "SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL:${c.hasCapability(SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL)}\n" +
+                        "SPATIAL_CAPABILITY_APP_ENVIRONMENT:${c.hasCapability(SPATIAL_CAPABILITY_APP_ENVIRONMENT)}\n" +
+                        "SPATIAL_CAPABILITY_SPATIAL_AUDIO:${c.hasCapability(SPATIAL_CAPABILITY_SPATIAL_AUDIO)}\n" +
+                        "SPATIAL_CAPABILITY_EMBED_ACTIVITY:${c.hasCapability(SPATIAL_CAPABILITY_EMBED_ACTIVITY)}\n"
+                )
+
                 val scope = rememberCoroutineScope()
                 XRExpTheme {
                     ModelInsideVolume(

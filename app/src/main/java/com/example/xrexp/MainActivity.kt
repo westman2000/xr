@@ -2,6 +2,7 @@ package com.example.xrexp
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -38,11 +39,22 @@ import androidx.xr.compose.subspace.layout.height
 import androidx.xr.compose.subspace.layout.movable
 import androidx.xr.compose.subspace.layout.resizable
 import androidx.xr.compose.subspace.layout.width
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_3D_CONTENT
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_APP_ENVIRONMENT
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_EMBED_ACTIVITY
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_SPATIAL_AUDIO
+import androidx.xr.scenecore.SpatialCapabilities.Companion.SPATIAL_CAPABILITY_UI
+import androidx.xr.scenecore.addSpatialCapabilitiesChangedListener
 import com.example.xrexp.ui.FullSpaceModeIconButton
 import com.example.xrexp.ui.HomeSpaceModeIconButton
 import com.example.xrexp.ui.theme.XRExpTheme
 
 class MainActivity : ComponentActivity() {
+
+    companion object {
+        private const val TAG = "MainActivity"
+    }
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +64,18 @@ class MainActivity : ComponentActivity() {
         setContent {
             XRExpTheme {
                 val session = LocalSession.current!!
+
+                session.addSpatialCapabilitiesChangedListener {
+                    Log.d(TAG, "SpatialCapabilitiesChangedListener: \n" +
+                            "SPATIAL_CAPABILITY_UI:${it.hasCapability(SPATIAL_CAPABILITY_UI)}\n" +
+                            "SPATIAL_CAPABILITY_3D_CONTENT:${it.hasCapability(SPATIAL_CAPABILITY_3D_CONTENT)}\n" +
+                            "SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL:${it.hasCapability(SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL)}\n" +
+                            "SPATIAL_CAPABILITY_APP_ENVIRONMENT:${it.hasCapability(SPATIAL_CAPABILITY_APP_ENVIRONMENT)}\n" +
+                            "SPATIAL_CAPABILITY_SPATIAL_AUDIO:${it.hasCapability(SPATIAL_CAPABILITY_SPATIAL_AUDIO)}\n" +
+                            "SPATIAL_CAPABILITY_EMBED_ACTIVITY:${it.hasCapability(SPATIAL_CAPABILITY_EMBED_ACTIVITY)}\n"
+                    )
+                }
+
                 if (LocalSpatialCapabilities.current.isSpatialUiEnabled) {
                     Subspace {
                         MySpatialContent(onRequestHomeSpaceMode = { session.spatialEnvironment.requestHomeSpaceMode() })
