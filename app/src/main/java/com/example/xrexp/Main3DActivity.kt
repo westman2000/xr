@@ -127,7 +127,7 @@ class Main3DActivity : ComponentActivity() {
                     }
                 }
                 SpatialPanel(
-                    SubspaceModifier.height(300.dp).width(400.dp)
+                    SubspaceModifier.height(300.dp).width(700.dp)
                 ) {
                     BottomEdgeOrbiter()
                 }
@@ -148,7 +148,7 @@ class Main3DActivity : ComponentActivity() {
             ) {
                 Row(
                     Modifier
-                        .width(500.dp)
+                        .width(700.dp)
                         .height(100.dp)
                         .background(Color(0.25f, 0.0f, 0.0f)),
                     horizontalArrangement = Arrangement.Center,
@@ -164,7 +164,7 @@ class Main3DActivity : ComponentActivity() {
                         onClick = { openSceneViewer() },
                         modifier = Modifier.padding(16.dp)
                     ) {
-                        Text("Button")
+                        Text("Viewer")
                     }
                 }
             }
