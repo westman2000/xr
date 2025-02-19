@@ -8,6 +8,8 @@
     <!-- Jetpack XR apps required to request https://bit.ly/40Sv3Cq -->
     <uses-permission android:name="android.permission.SCENE_UNDERSTANDING" />
 
+    <uses-permission android:name="android.permission.HAND_TRACKING" />
+
     <!-- This is necessary due to a known issue causing a higher minSDK than intended -->
     <!-- copy/paste this from github sample, but in this project i set min sdk to 34 -->
     <uses-sdk tools:overrideLibrary="androidx.xr.scenecore, androidx.xr.compose"/>
@@ -24,34 +26,76 @@
         tools:targetApi="31"
         tools:ignore="ObsoleteSdkInt">
 
-        <!-- This will start app in HOME space mode by default at beginning (https://bit.ly/3CB1q0p) -->
-<!--        <property-->
-<!--            android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"-->
-<!--            android:value="XR_ACTIVITY_START_MODE_HOME_SPACE_MANAGED" />-->
-
-        <!-- This will start app in FULL space mode by default at beginning -->
-        <!-- Known Issues: When an app launches directly into Full Space using the
-        PROPERTY_XR_ACTIVITY_START_MODE property in their manifest, Activities/Applications
-        are initially opened in Home Space before transitioning into Full Space. -->
-        <property
-            android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
-            android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED" />
-
         <activity
-            android:name=".MainEnvironmentActivity"
+            android:name=".LauncherActivity"
             android:exported="true"
             android:theme="@style/Theme.XRExp">
+            <property
+                android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
+                android:value="XR_ACTIVITY_START_MODE_HOME_SPACE_MANAGED" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".MainActivity"/>
-        <activity android:name=".Main3DActivity" android:launchMode="singleTask"/>
-        <activity android:name=".Main3DAnimActivity" android:launchMode="singleTask"/>
-        <activity android:name=".MainVideoActivity"/>
-        <activity android:name=".m3.M3MainActivity"/>
+        <activity android:name=".MainActivity">
+            <!-- This will start app in HOME space mode by default at beginning (https://bit.ly/3CB1q0p) -->
+            <property
+                android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
+                android:value="XR_ACTIVITY_START_MODE_HOME_SPACE_MANAGED" />
+        </activity>
+
+        <activity android:name=".Main3DActivity" android:launchMode="singleTask">
+            <property
+                android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
+                android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED" />
+        </activity>
+
+        <activity android:name=".Main3DAnimActivity" android:launchMode="singleTask">
+            <property
+                android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
+                android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED" />
+        </activity>
+
+        <activity android:name=".MainEnvironmentActivity" android:launchMode="singleTask">
+            <property
+                android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
+                android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED" />
+        </activity>
+
+        <activity android:name=".MainVideoActivity">
+            <property
+                android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
+                android:value="XR_ACTIVITY_START_MODE_HOME_SPACE_MANAGED" />
+        </activity>
+
+        <activity android:name=".m3.M3MainActivity">
+            <property
+                android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
+                android:value="XR_ACTIVITY_START_MODE_HOME_SPACE_MANAGED" />
+        </activity>
+
+        <activity android:name=".arcore.MainActivity"
+            android:launchMode="singleTask"
+            android:exported="true"
+            android:theme="@style/Theme.XRExp">
+            <property
+                android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
+                android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED"/>
+        </activity>
+        <activity android:name=".arcore.helloar.HelloArActivity"
+            android:exported="true"
+            android:theme="@style/Theme.XRExp">
+        </activity>
+        <activity android:name=".arcore.persistentanchors.PersistentAnchorsActivity"
+            android:exported="true"
+            android:theme="@style/Theme.XRExp">
+        </activity>
+        <activity android:name=".arcore.handtracking.HandTrackingActivity"
+            android:exported="true"
+            android:theme="@style/Theme.XRExp">
+        </activity>
 
     </application>
 

@@ -11,6 +11,7 @@ import androidx.xr.scenecore.setFullSpaceModeWithEnvironmentInherited
 import com.example.xrexp.Main3DActivity
 import com.example.xrexp.Main3DAnimActivity
 import com.example.xrexp.MainActivity
+import com.example.xrexp.MainEnvironmentActivity
 import com.example.xrexp.MainVideoActivity
 import com.example.xrexp.m3.M3MainActivity
 
@@ -40,6 +41,16 @@ object NavigationManager {
         ExpActivityInfo(
             activityClass = M3MainActivity::class.java,
             description = "Material3 example with adaptive layouts"
+        ),
+        ExpActivityInfo(
+            activityClass = com.example.xrexp.arcore.MainActivity::class.java,
+            description = "ARCore test application",
+            isFullSpace = true
+        ),
+        ExpActivityInfo(
+            activityClass = MainEnvironmentActivity::class.java,
+            description = "Testing environments properties, skybox, passthrough...",
+            isFullSpace = true
         )
     )
 
