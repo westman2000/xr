@@ -1,5 +1,5 @@
 [versions]
-agp = "8.6.1"
+agp = "8.8.1"
 #noinspection GradleDependency
 kotlin = "2.0.21"
 coreKtx = "1.15.0"
@@ -10,7 +10,7 @@ lifecycleRuntimeKtx = "2.8.7"
 lifecycleRuntimeCompose = "2.8.7"
 lifecycleViewmodelCompose = "2.8.7"
 activityCompose = "1.10.0"
-material3 = "1.0.0-alpha02"
+material3 = "1.3.1"
 media3Exoplayer = "1.5.1"
 runtime = "1.8.0-beta02"
 composeBom = "2025.02.00"
@@ -28,16 +28,7 @@ composeTesting      = "1.0.0-alpha02"
 runtimeTesting      = "1.0.0-alpha02"
 scenecoreTesting    = "1.0.0-alpha02"
 
-material = "1.12.0" # TODO - not used
-screenshot = "0.0.1-alpha08" # TODO - not used
-adaptiveAndroid = "1.0.0" # TODO - not used
-
 [libraries]
-
-# not used
-material = { module = "com.google.android.material:material", version.ref = "material" } # TODO - not used
-androidx-adaptive-android = { group = "androidx.compose.material3.adaptive", name = "adaptive-android", version.ref = "adaptiveAndroid" } # TODO - not used
-
 # jetbrains
 kotlinx-coroutines-guava = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-guava", version.ref = "kotlinxCoroutinesGuava" }
 
@@ -83,5 +74,4 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" } # TODO - not used
 

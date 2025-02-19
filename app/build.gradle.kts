@@ -70,10 +70,7 @@ dependencies {
     implementation("androidx.compose.material3.adaptive:adaptive-layout:1.1.0-beta01")
     implementation("androidx.compose.material3.adaptive:adaptive-navigation:1.1.0-beta01")
     implementation("androidx.compose.material3.adaptive:adaptive-navigation:1.1.0-beta01")
-    // https://mvnrepository.com/artifact/androidx.compose.material3/material3-adaptive-navigation-suite-android
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite-android:1.4.0-alpha07")
-
-//    implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.4.0-alpha07")
 
 
 
