@@ -1,28 +1,53 @@
 package com.example.xrexp
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.lifecycleScope
+import androidx.xr.compose.platform.LocalHasXrSpatialFeature
 import androidx.xr.compose.platform.LocalSession
+import androidx.xr.compose.platform.LocalSpatialCapabilities
+import androidx.xr.compose.spatial.Orbiter
+import androidx.xr.compose.spatial.OrbiterEdge
 import androidx.xr.scenecore.Session
+import com.example.xrexp.environment.EnvironmentController
 import com.example.xrexp.ui.ExpActivityInfo
 import com.example.xrexp.ui.NavigationManager
+import com.example.xrexp.ui.RequestFullSpaceButton
+import com.example.xrexp.ui.RequestHomeSpaceButton
+import com.example.xrexp.ui.SetPassthroughButton
+import com.example.xrexp.ui.SetVirtualEnvironmentButton
+import com.example.xrexp.ui.theme.LocalSpacing
 import com.example.xrexp.ui.theme.XRExpTheme
 
 class LauncherActivity : ComponentActivity() {
@@ -38,28 +63,117 @@ class LauncherActivity : ComponentActivity() {
 
         setContent {
             XRExpTheme {
-                // If we aren't able to access the session, these buttons wouldn't work and shouldn't be shown
-                val session = LocalSession.current
+                Primary()
+            }
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun XRTopAppBar() {
+        TopAppBar(
+            title = { Text(stringResource(R.string.app_name)) },
+            actions = {
+                // Only show the mode toggle if the device supports spatial UI
+                if (LocalHasXrSpatialFeature.current && !LocalSpatialCapabilities.current.isSpatialUiEnabled) {
+                    // If we aren't able to access the session, these buttons wouldn't work and shouldn't be shown
+                    val activity = LocalActivity.current
+                    val isJXRSessionAvailable = LocalSession.current != null
+                    if (activity is ComponentActivity && isJXRSessionAvailable) {
+                        val environmentController = remember(activity) {
+                            val session = Session.create(activity)
+                            EnvironmentController(session, activity.lifecycleScope)
+                        }
+                        RequestFullSpaceButton { environmentController.requestFullSpaceMode() }
+                    }
+                }
+            }
+        )
+    }
+
+    @Composable
+    fun Primary() {
+        Scaffold(
+            topBar = { XRTopAppBar() }
+        ) { innerPadding ->
+
+            val modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+
+            Box(Modifier.padding(innerPadding)) {
                 ActivityListScreen(
-                    NavigationManager, this, session
+                    modifier = modifier
                 )
+                if (LocalHasXrSpatialFeature.current && LocalSpatialCapabilities.current.isSpatialUiEnabled) {
+                    LocalActivity.current?.let { activity ->
+                        val environmentController = remember(activity) {
+                            val session = Session.create(activity)
+                            EnvironmentController(session, (activity as ComponentActivity).lifecycleScope)
+                        }
+                        // load the model early so it's in memory for when we need it
+                        val environmentModelName = "green_hills_ktx2_mipmap.glb"
+                        environmentController.loadModelAsset(environmentModelName)
+
+                        val showSecondOrbiter = remember { mutableStateOf(false) }
+
+                        Orbiter(
+                            position = OrbiterEdge.Vertical.End,
+                            alignment = Alignment.Top,
+                            offset = LocalSpacing.current.xxxxl
+                        ) {
+                            Surface(modifier = Modifier.clip(CircleShape)) {
+                                Column {
+                                    RequestHomeSpaceButton { environmentController.requestHomeSpaceMode() }
+                                    SetVirtualEnvironmentButton(
+                                        modifier = Modifier
+                                            .padding(LocalSpacing.current.m)
+                                            .background(
+                                            if (showSecondOrbiter.value)
+                                                MaterialTheme.colorScheme.inversePrimary
+                                            else
+                                                MaterialTheme.colorScheme.onSecondary,
+                                            CircleShape
+                                        )
+                                    ) {
+                                        showSecondOrbiter.value = !showSecondOrbiter.value
+                                    }
+                                }
+                            }
+
+                            if (showSecondOrbiter.value) {
+                                Orbiter(
+                                    position = OrbiterEdge.Vertical.End,
+                                    alignment = Alignment.Top,
+                                    offset = LocalSpacing.current.xxxxl
+                                ) {
+                                    Surface(modifier = Modifier.clip(CircleShape)) {
+                                        Column {
+                                            SetPassthroughButton { environmentController.requestPassthrough(1f) }
+                                            SetPassthroughButton { environmentController.requestPassthrough(0f) }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 
     @Composable
-    fun ActivityListScreen(navManager: NavigationManager, context: Context, session: Session?) {
-        val activities = navManager.getActivities()
-
+    fun ActivityListScreen(modifier : Modifier) {
+        val context = LocalContext.current
+        val activities = NavigationManager.getActivities()
+        val session = LocalSession.current
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
+            modifier = modifier
         ) {
             items(activities.size) {
                 val expActivityInfo = activities[it]
                 ActivityItem(expActivityInfo, onClick = {
-                    navManager.start(context, expActivityInfo, session)
+                    NavigationManager.start(context, expActivityInfo, session)
                 })
             }
         }

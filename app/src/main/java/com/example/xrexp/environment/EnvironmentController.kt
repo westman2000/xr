@@ -9,7 +9,14 @@ import com.example.xrexp.Main3DActivity.Companion.GLB_FILE_NAME
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class EnvironmentController(private val xrSession: Session, private val coroutineScope: CoroutineScope) {
+class EnvironmentController(
+    private val xrSession: Session,
+    private val coroutineScope: CoroutineScope
+) {
+
+    companion object {
+        private const val TAG = "EnvironmentController"
+    }
 
     private val assetCache: HashMap<String, Any> = HashMap()
     private var activeEnvironmentModelName: String? = null
@@ -18,7 +25,9 @@ class EnvironmentController(private val xrSession: Session, private val coroutin
 
     fun requestFullSpaceMode() = xrSession.spatialEnvironment.requestFullSpaceMode()
 
-    fun requestPassthrough() = xrSession.spatialEnvironment.setPassthroughOpacityPreference(1f)
+    fun requestPassthrough(
+        passthroughOpacityPreference: Float?
+    ) = xrSession.spatialEnvironment.setPassthroughOpacityPreference(passthroughOpacityPreference)
 
     /**
      * Request the system load a custom Environment
@@ -34,7 +43,8 @@ class EnvironmentController(private val xrSession: Session, private val coroutin
 
                     SpatialEnvironment.SpatialEnvironmentPreference(
                         skybox = null,
-                        geometry = environmentModel).let {
+                        geometry = environmentModel
+                    ).let {
                         xrSession.spatialEnvironment.setSpatialEnvironmentPreference(
                             it
                         )
@@ -45,9 +55,7 @@ class EnvironmentController(private val xrSession: Session, private val coroutin
                 xrSession.spatialEnvironment.setPassthroughOpacityPreference(0f)
 
             } catch (e: Exception){
-                Log.e(
-                    "Hello Android XR",
-                    "Failed to update Environment Preference for $environmentModelName: $e")
+                Log.e(TAG, "Failed to update Environment Preference for $environmentModelName: $e")
             }
 
         }
@@ -63,9 +71,7 @@ class EnvironmentController(private val xrSession: Session, private val coroutin
                     assetCache[modelName] = gltfModel
 
                 }catch (e: Exception) {
-                    Log.e(
-                        "Hello Android XR",
-                        "Failed to load model for $modelName: $e")
+                    Log.e(TAG, "Failed to load model for $modelName: $e")
                 }
             }
         }

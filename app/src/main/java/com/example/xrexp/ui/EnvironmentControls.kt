@@ -57,7 +57,7 @@ fun EnvironmentControls(modifier: Modifier = Modifier) {
                             environmentModelName
                         )
                     }
-                    SetPassthroughButton { environmentController.requestPassthrough() }
+                    SetPassthroughButton { environmentController.requestPassthrough(1f) }
                     VerticalDivider(
                         modifier = Modifier
                             .height(32.dp)
@@ -74,14 +74,14 @@ fun EnvironmentControls(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun SetVirtualEnvironmentButton(
+fun SetVirtualEnvironmentButton(
     modifier: Modifier = Modifier, onclick: () -> Unit
 ) {
     IconButton(
         onClick = onclick,
         modifier = modifier
-            .padding(16.dp)
-            .background(MaterialTheme.colorScheme.onSecondary, CircleShape)
+//            .padding(16.dp)
+//            .background(MaterialTheme.colorScheme.onSecondary, CircleShape)
     ) {
         Icon(
             painter = painterResource(R.drawable.environment_24px),
@@ -91,13 +91,13 @@ private fun SetVirtualEnvironmentButton(
 }
 
 @Composable
-private fun SetPassthroughButton(
+fun SetPassthroughButton(
     modifier: Modifier = Modifier, onclick: () -> Unit
 ) {
     IconButton(
         onClick = onclick,
         modifier = modifier
-            .padding(top = 16.dp, bottom = 16.dp, end = 16.dp)
+            .padding(16.dp)
             .background(MaterialTheme.colorScheme.onSecondary, CircleShape)
     ) {
         Icon(
@@ -108,7 +108,7 @@ private fun SetPassthroughButton(
 }
 
 @Composable
-private fun RequestHomeSpaceButton(onclick: () -> Unit) {
+fun RequestHomeSpaceButton(onclick: () -> Unit) {
     IconButton(
         onClick = onclick,
         modifier = Modifier
@@ -123,7 +123,7 @@ private fun RequestHomeSpaceButton(onclick: () -> Unit) {
 }
 
 @Composable
-private fun RequestFullSpaceButton(onclick: () -> Unit) {
+fun RequestFullSpaceButton(onclick: () -> Unit) {
     IconButton(
         onClick = onclick, modifier = Modifier.padding(8.dp)
     ) {
