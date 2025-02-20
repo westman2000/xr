@@ -56,7 +56,7 @@ object NavigationManager {
 
     fun getActivities(): List<ExpActivityInfo> = activityRegistry
 
-    fun start(context: Context, info : ExpActivityInfo, session : Session) {
+    fun start(context: Context, info : ExpActivityInfo, session : Session?) {
 
         val intent = Intent(context, info.activityClass)
 
@@ -64,7 +64,7 @@ object NavigationManager {
             Log.i(TAG, "Starting new activity(${info.activityClass.name}) in Full space")
             intent.flags = FLAG_ACTIVITY_NEW_TASK
             var bundle = Bundle()
-            var startActivityBundle = session.setFullSpaceMode(bundle)
+            var startActivityBundle = session?.setFullSpaceMode(bundle) ?: bundle
             context.startActivity(intent, startActivityBundle)
         } else {
             Log.i(TAG, "Starting new activity(${info.activityClass.name}) in Home space")
