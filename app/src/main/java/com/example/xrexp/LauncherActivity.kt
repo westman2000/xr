@@ -2,6 +2,7 @@ package com.example.xrexp
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
@@ -130,12 +131,12 @@ class LauncherActivity : ComponentActivity() {
                                         modifier = Modifier
                                             .padding(LocalSpacing.current.m)
                                             .background(
-                                            if (showSecondOrbiter.value)
-                                                MaterialTheme.colorScheme.inversePrimary
-                                            else
-                                                MaterialTheme.colorScheme.onSecondary,
-                                            CircleShape
-                                        )
+                                                if (showSecondOrbiter.value)
+                                                    MaterialTheme.colorScheme.inversePrimary
+                                                else
+                                                    MaterialTheme.colorScheme.onSecondary,
+                                                CircleShape
+                                            )
                                     ) {
                                         showSecondOrbiter.value = !showSecondOrbiter.value
                                     }
@@ -184,7 +185,7 @@ class LauncherActivity : ComponentActivity() {
             items(activities.size) {
                 val expActivityInfo = activities[it]
                 ActivityItem(expActivityInfo, onClick = {
-                    NavigationManager.start(context, expActivityInfo, session)
+                    NavigationManager.start(context, expActivwwwwityInfo, session)
                 })
             }
         }
@@ -193,10 +194,10 @@ class LauncherActivity : ComponentActivity() {
     @Composable
     fun ActivityItem(activity: ExpActivityInfo, onClick: () -> Unit) {
         Card(
+            onClick = onClick,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp)
-                .clickable { onClick },
+                .padding(8.dp),
             shape = RoundedCornerShape(8.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
