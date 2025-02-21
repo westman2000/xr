@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -112,7 +113,7 @@ class LauncherActivity : ComponentActivity() {
                             EnvironmentController(session, (activity as ComponentActivity).lifecycleScope)
                         }
                         // load the model early so it's in memory for when we need it
-                        val environmentModelName = "green_hills_ktx2_mipmap.glb"
+                        val environmentModelName = "env/green_hills_ktx2_mipmap.glb"
                         environmentController.loadModelAsset(environmentModelName)
 
                         val showSecondOrbiter = remember { mutableStateOf(false) }
@@ -140,25 +141,28 @@ class LauncherActivity : ComponentActivity() {
                                     }
                                 }
                             }
+                        }
 
-                            if (showSecondOrbiter.value) {
-                                Orbiter(
-                                    position = OrbiterEdge.Vertical.End,
-                                    alignment = Alignment.Top,
-                                    offset = LocalSpacing.current.xxxxl
-                                ) {
-                                    Surface(modifier = Modifier.clip(CircleShape)) {
-                                        Column {
-                                            SetPassthroughButton(
-                                                iconResId = R.drawable.visibility_on,
-                                                stringResId = R.string.enable_passthrough
-                                            ) { environmentController.requestPassthrough(1f) }
-                                            SetPassthroughButton(
-                                                iconResId = R.drawable.visibility_off,
-                                                stringResId = R.string.disable_passthrough
-                                            )
-                                            { environmentController.requestPassthrough(0f) }
-                                        }
+                        if (showSecondOrbiter.value) {
+                            Orbiter(
+                                position = OrbiterEdge.Vertical.End,
+                                alignment = Alignment.Top,
+                                offset = LocalSpacing.current.xxxxl + LocalSpacing.current.xxxxl
+                            ) {
+                                Surface(modifier = Modifier.clip(CircleShape)) {
+                                    Column {
+                                        SetPassthroughButton(
+                                            iconResId = R.drawable.visibility_on,
+                                            stringResId = R.string.enable_passthrough
+                                        ) { environmentController.requestPassthrough(1f) }
+                                        SetPassthroughButton(
+                                            iconResId = R.drawable.visibility_off,
+                                            stringResId = R.string.disable_passthrough
+                                        ) { environmentController.requestPassthrough(0f) }
+                                        SetVirtualEnvironmentButton(
+                                            iconResId = R.drawable.ic_download,
+                                            stringResId = R.string.replace_virtual_environment
+                                        ) { environmentController.requestCustomEnvironment(environmentModelName) }
                                     }
                                 }
                             }

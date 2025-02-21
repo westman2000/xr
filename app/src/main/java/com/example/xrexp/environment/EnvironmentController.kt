@@ -5,7 +5,6 @@ import androidx.concurrent.futures.await
 import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.Session
 import androidx.xr.scenecore.SpatialEnvironment
-import com.example.xrexp.Main3DActivity.Companion.GLB_FILE_NAME
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -66,7 +65,7 @@ class EnvironmentController(
             //load the asset if it hasn't been loaded previously
             if (!assetCache.containsKey(modelName)){
                 try {
-                    val gltfModel = GltfModel.create(xrSession, GLB_FILE_NAME).await()
+                    val gltfModel = GltfModel.create(xrSession, modelName).await()
 
                     assetCache[modelName] = gltfModel
 

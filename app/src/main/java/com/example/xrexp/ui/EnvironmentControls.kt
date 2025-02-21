@@ -48,7 +48,7 @@ fun EnvironmentControls(modifier: Modifier = Modifier) {
             EnvironmentController(session, activity.lifecycleScope)
         }
         //load the model early so it's in memory for when we need it
-        val environmentModelName = "green_hills_ktx2_mipmap.glb"
+        val environmentModelName = "env/green_hills_ktx2_mipmap.glb"
         environmentController.loadModelAsset(environmentModelName)
 
         Surface(modifier.clip(CircleShape)) {
@@ -77,17 +77,18 @@ fun EnvironmentControls(modifier: Modifier = Modifier) {
 
 @Composable
 fun SetVirtualEnvironmentButton(
-    modifier: Modifier = Modifier, onclick: () -> Unit
+    modifier: Modifier = Modifier.padding(16.dp).background(MaterialTheme.colorScheme.onSecondary, CircleShape),
+    @DrawableRes iconResId: Int = R.drawable.environment_24px,
+    @StringRes stringResId: Int = R.string.set_virtual_environment,
+    onclick: () -> Unit
 ) {
     IconButton(
         onClick = onclick,
         modifier = modifier
-//            .padding(16.dp)
-//            .background(MaterialTheme.colorScheme.onSecondary, CircleShape)
     ) {
         Icon(
-            painter = painterResource(R.drawable.environment_24px),
-            contentDescription = stringResource(id = R.string.set_virtual_environment),
+            painter = painterResource(iconResId),
+            contentDescription = stringResource(stringResId),
         )
     }
 }

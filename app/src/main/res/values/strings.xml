@@ -9,6 +9,7 @@
     <string name="set_passthrough">Set passthrough</string>
     <string name="enable_passthrough">Enable passthrough</string>
     <string name="disable_passthrough">Disable passthrough</string>
+    <string name="replace_virtual_environment">Replace virtual environment</string>
     <string name="set_virtual_environment">Set virtual environment</string>
 
     <string name="primary_title">Primary card title</string>
