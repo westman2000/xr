@@ -2,7 +2,9 @@ package com.example.xrexp.environment
 
 import android.util.Log
 import androidx.concurrent.futures.await
+import androidx.xr.scenecore.ExrImage
 import androidx.xr.scenecore.GltfModel
+import androidx.xr.scenecore.JxrPlatformAdapter
 import androidx.xr.scenecore.Session
 import androidx.xr.scenecore.SpatialEnvironment
 import kotlinx.coroutines.CoroutineScope
@@ -31,17 +33,26 @@ class EnvironmentController(
     /**
      * Request the system load a custom Environment
      */
-    fun requestCustomEnvironment(environmentModelName: String) {
+    fun requestCustomEnvironment(
+        environmentModelName: String,
+        environmentImageName: String? = null
+    ) {
         coroutineScope.launch {
             try {
 
                 if (activeEnvironmentModelName == null ||
-                    activeEnvironmentModelName != environmentModelName){
+                    activeEnvironmentModelName != environmentModelName
+                    ) {
 
                     val environmentModel = assetCache[environmentModelName] as GltfModel
 
+                    var environmentImage : ExrImage? = null
+                    if (environmentImageName != null) {
+                        environmentImage = assetCache[environmentImageName] as ExrImage?
+                    }
+
                     SpatialEnvironment.SpatialEnvironmentPreference(
-                        skybox = null,
+                        skybox = environmentImage,
                         geometry = environmentModel
                     ).let {
                         xrSession.spatialEnvironment.setSpatialEnvironmentPreference(
@@ -62,8 +73,8 @@ class EnvironmentController(
 
     fun loadModelAsset(modelName: String) {
         coroutineScope.launch {
-            //load the asset if it hasn't been loaded previously
-            if (!assetCache.containsKey(modelName)){
+            // load the asset if it hasn't been loaded previously
+            if (!assetCache.containsKey(modelName)) {
                 try {
                     val gltfModel = GltfModel.create(xrSession, modelName).await()
 
@@ -71,6 +82,20 @@ class EnvironmentController(
 
                 }catch (e: Exception) {
                     Log.e(TAG, "Failed to load model for $modelName: $e")
+                }
+            }
+        }
+    }
+
+    fun loadImageAsset(imageName: String) {
+        coroutineScope.launch {
+            // load the asset if it hasn't been loaded previously
+            if (!assetCache.containsKey(imageName)) {
+                try {
+                    val exrImage = ExrImage.create(xrSession, imageName)
+                    assetCache[imageName] = exrImage
+                 }catch (e: Exception) {
+                    Log.e(TAG, "Failed to load ExrImage for $imageName: $e")
                 }
             }
         }
