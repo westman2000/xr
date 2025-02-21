@@ -149,8 +149,15 @@ class LauncherActivity : ComponentActivity() {
                                 ) {
                                     Surface(modifier = Modifier.clip(CircleShape)) {
                                         Column {
-                                            SetPassthroughButton { environmentController.requestPassthrough(1f) }
-                                            SetPassthroughButton { environmentController.requestPassthrough(0f) }
+                                            SetPassthroughButton(
+                                                iconResId = R.drawable.visibility_on,
+                                                stringResId = R.string.enable_passthrough
+                                            ) { environmentController.requestPassthrough(1f) }
+                                            SetPassthroughButton(
+                                                iconResId = R.drawable.visibility_off,
+                                                stringResId = R.string.disable_passthrough
+                                            )
+                                            { environmentController.requestPassthrough(0f) }
                                         }
                                     }
                                 }

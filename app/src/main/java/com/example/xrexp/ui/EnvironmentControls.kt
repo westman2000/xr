@@ -3,6 +3,8 @@ package com.example.xrexp.ui
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -92,7 +94,10 @@ fun SetVirtualEnvironmentButton(
 
 @Composable
 fun SetPassthroughButton(
-    modifier: Modifier = Modifier, onclick: () -> Unit
+    modifier: Modifier = Modifier,
+    @DrawableRes iconResId: Int = R.drawable.passthrough_24px,
+    @StringRes stringResId: Int = R.string.set_passthrough,
+    onclick: () -> Unit
 ) {
     IconButton(
         onClick = onclick,
@@ -101,8 +106,8 @@ fun SetPassthroughButton(
             .background(MaterialTheme.colorScheme.onSecondary, CircleShape)
     ) {
         Icon(
-            painter = painterResource(R.drawable.passthrough_24px),
-            contentDescription = stringResource(id = R.string.set_passthrough),
+            painter = painterResource(iconResId),
+            contentDescription = stringResource(stringResId),
         )
     }
 }
