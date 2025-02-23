@@ -185,7 +185,7 @@ class LauncherActivity : ComponentActivity() {
             items(activities.size) {
                 val expActivityInfo = activities[it]
                 ActivityItem(expActivityInfo, onClick = {
-                    NavigationManager.start(context, expActivwwwwityInfo, session)
+                    NavigationManager.start(context, expActivityInfo, session)
                 })
             }
         }
