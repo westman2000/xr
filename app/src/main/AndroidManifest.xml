@@ -5,10 +5,39 @@
     <!-- For video stream -->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- Jetpack XR apps required to request https://bit.ly/40Sv3Cq -->
+    <!-- region Dangerous Permissions -->
+
+    <!-- deprecated -->
     <uses-permission android:name="android.permission.SCENE_UNDERSTANDING" />
 
+    <!--
+        Use cases requiring this permission
+            - Tracking hand joint poses and angular and linear velocities; Using a mesh representation of the user's hands
+        Jetpack XR SDK features that require this permission:
+            - Hand state and joint poses
+     -->
     <uses-permission android:name="android.permission.HAND_TRACKING" />
+
+    <!--
+        Use cases requiring this permission:
+            - Light estimation; projecting passthrough onto mesh surfaces; performing raycasts against
+              trackables in the environment; plane tracking; object tracking; persistent anchors.
+        Jetpack XR SDK features that require this permission:
+             - Plane tracking
+             - Hit testing
+             - Anchor persistence
+    -->
+    <uses-permission android:name="android.permission.SCENE_UNDERSTANDING_COARSE" />
+
+    <!--
+        Use cases requiring this permission:
+            - Depth texture
+        Jetpack XR SDK features that require this permission:
+            n/a
+    -->
+    <uses-permission android:name="android.permission.SCENE_UNDERSTANDING_FINE" />
+
+    <!-- endregion -->
 
     <!-- This is necessary due to a known issue causing a higher minSDK than intended -->
     <!-- copy/paste this from github sample, but in this project i set min sdk to 34 -->
@@ -95,6 +124,15 @@
         <activity android:name=".arcore.handtracking.HandTrackingActivity"
             android:exported="true"
             android:theme="@style/Theme.XRExp">
+        </activity>
+
+        <activity android:name=".arcore.ExpArCoreActivity"
+            android:launchMode="singleTask"
+            android:exported="true"
+            android:theme="@style/Theme.XRExp">
+            <property
+                android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
+                android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED"/>
         </activity>
 
     </application>

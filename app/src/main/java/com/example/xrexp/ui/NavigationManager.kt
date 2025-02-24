@@ -7,12 +7,12 @@ import android.os.Bundle
 import android.util.Log
 import androidx.xr.scenecore.Session
 import androidx.xr.scenecore.setFullSpaceMode
-import androidx.xr.scenecore.setFullSpaceModeWithEnvironmentInherited
 import com.example.xrexp.Main3DActivity
 import com.example.xrexp.Main3DAnimActivity
 import com.example.xrexp.MainActivity
 import com.example.xrexp.MainEnvironmentActivity
 import com.example.xrexp.MainVideoActivity
+import com.example.xrexp.arcore.ExpArCoreActivity
 import com.example.xrexp.m3.M3MainActivity
 
 object NavigationManager {
@@ -23,6 +23,11 @@ object NavigationManager {
         ExpActivityInfo(
             activityClass = MainActivity::class.java,
             description = "The main entry point of the app"
+        ),
+        ExpActivityInfo(
+            activityClass = ExpArCoreActivity::class.java,
+            description = "Custom ArCore playground",
+            isFullSpace = true
         ),
         ExpActivityInfo(
             activityClass = Main3DActivity::class.java,
