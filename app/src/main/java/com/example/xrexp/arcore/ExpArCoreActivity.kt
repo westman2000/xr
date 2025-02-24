@@ -4,8 +4,18 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.xr.arcore.perceptionState
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreatePermissionsNotGranted
 import androidx.xr.runtime.SessionCreateSuccess
@@ -20,8 +30,8 @@ class ExpArCoreActivity : ComponentActivity() {
         private val permissionsToRequest = arrayOf(
             "android.permission.SCENE_UNDERSTANDING",
             "android.permission.HAND_TRACKING",
-            "android.permission.SCENE_UNDERSTANDING_COARSE",
-            "android.permission.SCENE_UNDERSTANDING_FINE"
+//            "android.permission.SCENE_UNDERSTANDING_COARSE",
+//            "android.permission.SCENE_UNDERSTANDING_FINE"
         )
     }
 
@@ -56,16 +66,11 @@ class ExpArCoreActivity : ComponentActivity() {
         } else {
             // Permissions already granted, proceed with functionality
             Log.i(TAG, "All permissions are already granted")
-            when (val result = Session.create(this)) {
-                is SessionCreateSuccess -> {
-                    session = result.session
-                    // TODO - working...
-                }
-                is SessionCreatePermissionsNotGranted -> {
-                    requestMultiplePermissions.launch(result.permissions.toTypedArray())
-                }
-            }
+
+            setupSession()
         }
+
+
     }
 
     override fun onResume() {
@@ -91,6 +96,7 @@ class ExpArCoreActivity : ComponentActivity() {
         if (!this::session.isInitialized) {
             return
         }
+        // TODO - working...
         session.pause()
     }
 
@@ -100,5 +106,35 @@ class ExpArCoreActivity : ComponentActivity() {
             return
         }
         session.destroy()
+    }
+
+    private fun setupSession() {
+        val result = Session.create(this)
+        Log.d(TAG, "result: $result")
+        when (result) {
+            is SessionCreateSuccess -> {
+                session = result.session
+                // TODO - working...
+                setContent { ExpArCoreWindow() }
+            }
+            is SessionCreatePermissionsNotGranted -> {
+                requestMultiplePermissions.launch(result.permissions.toTypedArray())
+            }
+        }
+    }
+
+    @Composable
+    fun ExpArCoreWindow() {
+        val state by session.state.collectAsStateWithLifecycle()
+        val perceptionState = state.perceptionState
+
+        Column(modifier = Modifier.background(color = Color.Magenta)) {
+            Text(text = "CoreState: ${state.timeMark}")
+            if (perceptionState != null) {
+//                Log.d(TAG, "perceptionState.trackables: ${perceptionState.trackables.toList()}")
+            } else {
+                Text("PerceptionState is null.")
+            }
+        }
     }
 }
