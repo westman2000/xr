@@ -1,19 +1,20 @@
 package com.example.xrexp
 
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -32,9 +33,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.xr.compose.platform.LocalHasXrSpatialFeature
 import androidx.xr.compose.platform.LocalSession
@@ -56,6 +57,34 @@ class LauncherActivity : ComponentActivity() {
 
     companion object {
         const val TAG = "LauncherActivity"
+    }
+
+    private var activityInfoToLaunch: ExpActivityInfo? = null
+    private var scenecoreSession : Session? = null
+
+    private val requestMultiplePermissions = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+        permissions.entries.forEach {
+            val permissionName = it.key
+            val isGranted = it.value
+            if (isGranted) {
+                // Permission is granted
+                Log.i(TAG, "Permission $permissionName is granted")
+            } else {
+                // Permission is denied
+                Log.e(TAG, "Permission $permissionName is denied")
+            }
+
+            val allPermissionsGranted = permissions.all { it.value }
+            if (!allPermissionsGranted) {
+                Toast.makeText(
+                    this,
+                    "Required permissions were not granted, try again. ",
+                    Toast.LENGTH_LONG,
+                ).show()
+            } else {
+                NavigationManager.start(this, activityInfoToLaunch!!, scenecoreSession)
+            }
+        }
     }
 
     @SuppressLint("RestrictedApi")
@@ -176,7 +205,6 @@ class LauncherActivity : ComponentActivity() {
 
     @Composable
     fun ActivityListScreen(modifier : Modifier) {
-        val context = LocalContext.current
         val activities = NavigationManager.getActivities()
         val session = LocalSession.current
         LazyColumn(
@@ -185,7 +213,7 @@ class LauncherActivity : ComponentActivity() {
             items(activities.size) {
                 val expActivityInfo = activities[it]
                 ActivityItem(expActivityInfo, onClick = {
-                    NavigationManager.start(context, expActivityInfo, session)
+                    requestPermissionsIfNeeded(expActivityInfo, session)
                 })
             }
         }
@@ -207,4 +235,22 @@ class LauncherActivity : ComponentActivity() {
         }
     }
 
+    private fun requestPermissionsIfNeeded(activityInfo: ExpActivityInfo, session : Session?) {
+        scenecoreSession = session
+        activityInfoToLaunch = activityInfo
+        if (activityInfo.permissionsToRequest.isNotEmpty()) {
+            // Check if permissions are already granted
+            val permissionsNotGranted = activityInfo.permissionsToRequest.filter {
+                ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+            }
+            if (permissionsNotGranted.isNotEmpty()) {
+                Log.i(TAG, "Request permissions if not granted. Launch request permissions...")
+                requestMultiplePermissions.launch(permissionsNotGranted.toTypedArray())
+            } else {
+                NavigationManager.start(this, activityInfo, session)
+            }
+        } else {
+            NavigationManager.start(this, activityInfo, session)
+        }
+    }
 }

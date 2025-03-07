@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.xr.scenecore.Session
 import androidx.xr.scenecore.setFullSpaceMode
 import com.example.xrexp.Main3DActivity
@@ -27,7 +28,13 @@ object NavigationManager {
         ExpActivityInfo(
             activityClass = ExpArCoreActivity::class.java,
             description = "Custom ArCore playground",
-            isFullSpace = true
+            isFullSpace = true,
+            permissionsToRequest = arrayOf(
+                "android.permission.SCENE_UNDERSTANDING",
+                "android.permission.HAND_TRACKING",
+//            "android.permission.SCENE_UNDERSTANDING_COARSE",
+//            "android.permission.SCENE_UNDERSTANDING_FINE"
+            )
         ),
         ExpActivityInfo(
             activityClass = Main3DActivity::class.java,
