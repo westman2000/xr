@@ -1,6 +1,8 @@
 package com.example.xrexp.arcore
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -15,14 +17,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.concurrent.futures.await
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.xr.arcore.Hand
 import androidx.xr.arcore.HandJointType
 
 import androidx.xr.arcore.perceptionState
-import androidx.xr.compose.spatial.Subspace
-import androidx.xr.compose.subspace.MainPanel
 import androidx.xr.compose.subspace.SpatialPanel
 import androidx.xr.compose.subspace.SubspaceComposable
 import androidx.xr.compose.subspace.layout.SubspaceModifier
@@ -32,14 +33,15 @@ import androidx.xr.compose.subspace.layout.resizable
 import androidx.xr.compose.subspace.layout.width
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.Pose
-import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.Session as SceneCoreSession
 import androidx.xr.runtime.Session as ARCoreSession
 import androidx.xr.scenecore.GltfModel
+import androidx.xr.scenecore.GltfModelEntity
+import androidx.xr.compose.platform.SpatialCapabilities
+import androidx.xr.compose.spatial.Subspace
 import com.example.xrexp.ui.theme.LocalSpacing
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
-import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -49,12 +51,16 @@ import kotlin.collections.iterator
 class ExpHandsActivity : ComponentActivity() {
 
     companion object {
+
         private val TAG = "ExpArCoreActivity"
+
+        const val GLB_FILE_NAME = "models/xyzArrows.glb"
     }
 
     private lateinit var arCoreSession: ARCoreSession
     private lateinit var sceneCoreSession: SceneCoreSession
     private lateinit var arrowsModel : GltfModel
+    private lateinit var palmEntity : GltfModelEntity
 
     private lateinit var resourceAsync : Deferred<Unit>
 
@@ -74,7 +80,22 @@ class ExpHandsActivity : ComponentActivity() {
         resourceAsync =
             lifecycleScope.async {
                 arrowsModel = GltfModel.create(sceneCoreSession, "models/xyzArrows.glb").await()
+                palmEntity = GltfModelEntity.create(sceneCoreSession, arrowsModel, Pose())
+                palmEntity.setScale(0.05f)
+                palmEntity.setParent(sceneCoreSession.activitySpace)
             }
+
+        lifecycleScope.launch {
+            val gltfModel = GltfModel.create(sceneCoreSession, GLB_FILE_NAME).await()
+            // check for spatial capabilities
+            if (SpatialCapabilities.getOrCreate(sceneCoreSession).isContent3dEnabled){
+                // create the gltf entity using the gltf file from the previous snippet
+                val gltfEntity = GltfModelEntity.create(sceneCoreSession, gltfModel)
+                gltfEntity.setParent(sceneCoreSession.activitySpace)
+            } else {
+                Toast.makeText(this@ExpHandsActivity, "3D content not enabled", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     override fun onResume() {
@@ -87,19 +108,20 @@ class ExpHandsActivity : ComponentActivity() {
                 // Hand state has been updated.
                 // Use the state of hand joints to update an entity's position.
 
-//                val palmPose = leftHandState.handJoints[HandJointType.PALM] ?: return@collect
-//
-//                // the down direction points in the same direction as the palm
+                val palmPose = leftHandState.handJoints[HandJointType.PALM] ?: return@collect
+
+                // the down direction points in the same direction as the palm
 //                val angle = Vector3.angleBetween(palmPose.rotation * Vector3.Down, Vector3.Up)
 //                palmEntity.setHidden(angle > Math.toRadians(40.0))
-//
-//                val transformedPose =
-//                    sceneCoreSession.perceptionSpace.transformPoseTo(
-//                        palmPose,
-//                        sceneCoreSession.activitySpace,
-//                    )
-//                val newPosition = transformedPose.translation + transformedPose.down*0.05f
-//                palmEntity.setPose(Pose(newPosition, transformedPose.rotation))
+
+                val transformedPose =
+                    sceneCoreSession.perceptionSpace.transformPoseTo(
+                        palmPose,
+                        sceneCoreSession.activitySpace,
+                    )
+                val newPosition = transformedPose.translation + transformedPose.down * 0.05f
+                Log.d(TAG, "new position: $newPosition")
+                palmEntity.setPose(Pose(newPosition, transformedPose.rotation))
             }
         }
     }
@@ -122,27 +144,27 @@ class ExpHandsActivity : ComponentActivity() {
 
         SpatialPanel(
             SubspaceModifier
-                .width(1000.dp)
-                .height(480.dp)
+//                .width(1000.dp)
+//                .height(480.dp)
                 .resizable(true)
                 .movable(true)
         ) {
-            Column(
-                modifier = Modifier
-                    .background(Color.White)
-                    .fillMaxHeight()
-                    .fillMaxWidth()
-                    .padding(LocalSpacing.current.l)
-            ) {
-                Text(
-                    modifier = Modifier.padding(LocalSpacing.current.m),
-                    text = "Detected planes: ${perceptionState?.trackables?.size}"
-                )
-                Row {
-                    HandTrackingPanel(perceptionState?.leftHand, true)
-                    HandTrackingPanel(perceptionState?.rightHand, false)
-                }
-            }
+//            Column(
+//                modifier = Modifier
+//                    .background(Color.White)
+//                    .fillMaxHeight()
+//                    .fillMaxWidth()
+//                    .padding(LocalSpacing.current.l)
+//            ) {
+//                Text(
+//                    modifier = Modifier.padding(LocalSpacing.current.m),
+//                    text = "Detected planes: ${perceptionState?.trackables?.size}"
+//                )
+//                Row {
+//                    HandTrackingPanel(perceptionState?.leftHand, true)
+//                    HandTrackingPanel(perceptionState?.rightHand, false)
+//                }
+//            }
         }
     }
 
@@ -161,7 +183,8 @@ class ExpHandsActivity : ComponentActivity() {
 
         Column(
             modifier =
-                Modifier.background(color = bgColor)
+                Modifier
+                    .background(color = bgColor)
                     .fillMaxHeight()
                     .padding(horizontal = LocalSpacing.current.m)
         ) {

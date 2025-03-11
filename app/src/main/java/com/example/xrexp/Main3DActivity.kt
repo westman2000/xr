@@ -60,7 +60,7 @@ class Main3DActivity : ComponentActivity() {
 
     companion object {
         const val TAG = "Main3DActivity"
-        const val GLB_FILE_NAME = "animated_robot.glb"
+        const val GLB_FILE_NAME = "models/xyzArrows.glb"//""animated_robot.glb"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -114,17 +114,18 @@ class Main3DActivity : ComponentActivity() {
                      */
                     modifier = SubspaceModifier.offset(z = (-2000).dp).scale(0.5f).resizable()
                 ) {
-//                    scope.launch {
-//                        val gltfModel = GltfModel.create(xrSession, GLB_FILE_NAME).await()
-//                        // check for spatial capabilities
-//                        if (spatialCapabilities.isContent3dEnabled){
-//                            // create the gltf entity using the gltf file from the previous snippet
-//                            val gltfEntity = GltfModelEntity.create(xrSession, gltfModel)
-//                            it.addChild(gltfEntity)
-//                        } else {
-//                            Toast.makeText(context, "3D content not enabled", Toast.LENGTH_LONG).show()
-//                        }
-//                    }
+                    scope.launch {
+                        val gltfModel = GltfModel.create(xrSession, GLB_FILE_NAME).await()
+                        // check for spatial capabilities
+                        if (spatialCapabilities.isContent3dEnabled){
+                            // create the gltf entity using the gltf file from the previous snippet
+                            val gltfEntity = GltfModelEntity.create(xrSession, gltfModel)
+//                            gltfEntity.setParent(xrSession.activitySpace)
+                            it.addChild(gltfEntity)
+                        } else {
+                            Toast.makeText(context, "3D content not enabled", Toast.LENGTH_LONG).show()
+                        }
+                    }
                 }
                 SpatialPanel(
                     SubspaceModifier.height(300.dp).width(700.dp)
