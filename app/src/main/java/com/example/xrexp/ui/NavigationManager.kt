@@ -14,6 +14,7 @@ import com.example.xrexp.MainActivity
 import com.example.xrexp.MainEnvironmentActivity
 import com.example.xrexp.MainVideoActivity
 import com.example.xrexp.arcore.ExpArCoreActivity
+import com.example.xrexp.arcore.ExpHandsActivity
 import com.example.xrexp.m3.M3MainActivity
 
 object NavigationManager {
@@ -24,6 +25,15 @@ object NavigationManager {
         ExpActivityInfo(
             activityClass = MainActivity::class.java,
             description = "The main entry point of the app"
+        ),
+        ExpActivityInfo(
+            activityClass = ExpHandsActivity::class.java,
+            description = "Hands tracking test activity, ThumbsUP experiments",
+            isFullSpace = true,
+            permissionsToRequest = arrayOf(
+                "android.permission.SCENE_UNDERSTANDING",
+                "android.permission.HAND_TRACKING",
+            )
         ),
         ExpActivityInfo(
             activityClass = ExpArCoreActivity::class.java,
