@@ -60,7 +60,8 @@ class ExpHandsActivity : ComponentActivity() {
     private lateinit var arCoreSession: ARCoreSession
     private lateinit var sceneCoreSession: SceneCoreSession
     private lateinit var arrowsModel : GltfModel
-    private lateinit var palmEntity : GltfModelEntity
+    private val leftHandEntities = mutableMapOf<HandJointType, GltfModelEntity>()
+    private val rightHandEntities = mutableMapOf<HandJointType, GltfModelEntity>()
 
     private lateinit var resourceAsync : Deferred<Unit>
 
@@ -80,9 +81,19 @@ class ExpHandsActivity : ComponentActivity() {
         resourceAsync =
             lifecycleScope.async {
                 arrowsModel = GltfModel.create(sceneCoreSession, "models/xyzArrows.glb").await()
-                palmEntity = GltfModelEntity.create(sceneCoreSession, arrowsModel, Pose())
-                palmEntity.setScale(0.05f)
-                palmEntity.setParent(sceneCoreSession.activitySpace)
+
+                HandJointType.entries.forEach {
+                    leftHandEntities[it] = GltfModelEntity
+                        .create(sceneCoreSession, arrowsModel, Pose()).apply {
+                            setScale(0.01f)
+                            setParent(sceneCoreSession.activitySpace)
+                        }
+                    rightHandEntities[it] = GltfModelEntity
+                        .create(sceneCoreSession, arrowsModel, Pose()).apply {
+                            setScale(0.01f)
+                            setParent(sceneCoreSession.activitySpace)
+                        }
+                }
             }
 
         lifecycleScope.launch {
@@ -104,25 +115,33 @@ class ExpHandsActivity : ComponentActivity() {
         lifecycleScope.launch {
             resourceAsync.await()
 
-            Hand.left(arCoreSession)?.state?.collect { leftHandState -> // or Hand.right(session)
-                // Hand state has been updated.
-                // Use the state of hand joints to update an entity's position.
-
-                val palmPose = leftHandState.handJoints[HandJointType.PALM] ?: return@collect
-
-                // the down direction points in the same direction as the palm
-//                val angle = Vector3.angleBetween(palmPose.rotation * Vector3.Down, Vector3.Up)
-//                palmEntity.setHidden(angle > Math.toRadians(40.0))
-
-                val transformedPose =
-                    sceneCoreSession.perceptionSpace.transformPoseTo(
-                        palmPose,
-                        sceneCoreSession.activitySpace,
-                    )
-                val newPosition = transformedPose.translation + transformedPose.down * 0.05f
-                Log.d(TAG, "new position: $newPosition")
-                palmEntity.setPose(Pose(newPosition, transformedPose.rotation))
+            Hand.left(arCoreSession)?.state?.collect {
+                handStateTracking(it, true)
             }
+
+            Hand.right(arCoreSession)?.state?.collect {
+                handStateTracking(it, false)
+            }
+
+//            Hand.left(arCoreSession)?.state?.collect { leftHandState -> // or Hand.right(session)
+//                // Hand state has been updated.
+//                // Use the state of hand joints to update an entity's position.
+//
+//                val palmPose = leftHandState.handJoints[HandJointType.PALM] ?: return@collect
+//
+//                // the down direction points in the same direction as the palm
+////                val angle = Vector3.angleBetween(palmPose.rotation * Vector3.Down, Vector3.Up)
+////                palmEntity.setHidden(angle > Math.toRadians(40.0))
+//
+//                val transformedPose =
+//                    sceneCoreSession.perceptionSpace.transformPoseTo(
+//                        palmPose,
+//                        sceneCoreSession.activitySpace,
+//                    )
+//                val newPosition = transformedPose.translation + transformedPose.down * 0.01f
+//                Log.d(TAG, "new position: $newPosition")
+//                palmEntity.setPose(Pose(newPosition, transformedPose.rotation))
+//            }
         }
     }
 
@@ -191,6 +210,24 @@ class ExpHandsActivity : ComponentActivity() {
             Text("$name isActive: ${handState.isActive}")
             for ((jointType, pose) in handState.handJoints) {
                 Text("$name joint ${jointType}: ${pose.translation}")
+            }
+        }
+    }
+
+    private fun handStateTracking(handState: Hand.State, isLeftHand: Boolean) {
+        if (handState.isActive) {
+            handState.handJoints.forEach { joint ->
+                val transformedPose =
+                    sceneCoreSession.perceptionSpace.transformPoseTo(
+                        joint.value,
+                        sceneCoreSession.activitySpace,
+                    )
+                val newPosition = transformedPose.translation + transformedPose.down * 0.01f
+
+                if (isLeftHand)
+                    leftHandEntities[joint.key]?.setPose(Pose(newPosition, transformedPose.rotation))
+                else
+                    rightHandEntities[joint.key]?.setPose(Pose(newPosition, transformedPose.rotation))
             }
         }
     }
