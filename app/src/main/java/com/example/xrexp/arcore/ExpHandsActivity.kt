@@ -39,6 +39,7 @@ import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
 import androidx.xr.compose.platform.SpatialCapabilities
 import androidx.xr.compose.spatial.Subspace
+import com.example.xrexp.arcore.thumbsup.ThumbsUpDetector
 import com.example.xrexp.ui.theme.LocalSpacing
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -107,11 +108,7 @@ class ExpHandsActivity : ComponentActivity() {
                 Toast.makeText(this@ExpHandsActivity, "3D content not enabled", Toast.LENGTH_LONG).show()
             }
         }
-    }
 
-    override fun onResume() {
-        super.onResume()
-        arCoreSession.resume()
         lifecycleScope.launch {
             resourceAsync.await()
 
@@ -122,27 +119,12 @@ class ExpHandsActivity : ComponentActivity() {
             Hand.right(arCoreSession)?.state?.collect {
                 handStateTracking(it, false)
             }
-
-//            Hand.left(arCoreSession)?.state?.collect { leftHandState -> // or Hand.right(session)
-//                // Hand state has been updated.
-//                // Use the state of hand joints to update an entity's position.
-//
-//                val palmPose = leftHandState.handJoints[HandJointType.PALM] ?: return@collect
-//
-//                // the down direction points in the same direction as the palm
-////                val angle = Vector3.angleBetween(palmPose.rotation * Vector3.Down, Vector3.Up)
-////                palmEntity.setHidden(angle > Math.toRadians(40.0))
-//
-//                val transformedPose =
-//                    sceneCoreSession.perceptionSpace.transformPoseTo(
-//                        palmPose,
-//                        sceneCoreSession.activitySpace,
-//                    )
-//                val newPosition = transformedPose.translation + transformedPose.down * 0.01f
-//                Log.d(TAG, "new position: $newPosition")
-//                palmEntity.setPose(Pose(newPosition, transformedPose.rotation))
-//            }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        arCoreSession.resume()
     }
 
     override fun onPause() {
@@ -216,6 +198,15 @@ class ExpHandsActivity : ComponentActivity() {
 
     private fun handStateTracking(handState: Hand.State, isLeftHand: Boolean) {
         if (handState.isActive) {
+
+            val isThumbsUp = ThumbsUpDetector.isThumbsUp(handState)
+            if (isThumbsUp) {
+                // Handle hand thumbs up detected
+                Log.d(TAG, "=================================================================")
+                Log.d(TAG, ">>>>>>>>>>>                 ThumbsUp        <<<<<<<<<<<<<<<<<<<<<")
+                Log.d(TAG, "=================================================================")
+            }
+
             handState.handJoints.forEach { joint ->
                 val transformedPose =
                     sceneCoreSession.perceptionSpace.transformPoseTo(
