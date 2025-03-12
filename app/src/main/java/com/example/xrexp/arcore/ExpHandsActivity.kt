@@ -7,13 +7,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -27,10 +28,8 @@ import androidx.xr.arcore.perceptionState
 import androidx.xr.compose.subspace.SpatialPanel
 import androidx.xr.compose.subspace.SubspaceComposable
 import androidx.xr.compose.subspace.layout.SubspaceModifier
-import androidx.xr.compose.subspace.layout.height
 import androidx.xr.compose.subspace.layout.movable
 import androidx.xr.compose.subspace.layout.resizable
-import androidx.xr.compose.subspace.layout.width
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.Session as SceneCoreSession
@@ -39,6 +38,9 @@ import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
 import androidx.xr.compose.platform.SpatialCapabilities
 import androidx.xr.compose.spatial.Subspace
+import androidx.xr.compose.subspace.layout.height
+import androidx.xr.compose.subspace.layout.width
+import com.example.xrexp.arcore.thumbsup.HandGestureDebugVisualization
 import com.example.xrexp.arcore.thumbsup.ThumbsUpDetector
 import com.example.xrexp.ui.theme.LocalSpacing
 import kotlinx.coroutines.Deferred
@@ -63,8 +65,11 @@ class ExpHandsActivity : ComponentActivity() {
     private lateinit var arrowsModel : GltfModel
     private val leftHandEntities = mutableMapOf<HandJointType, GltfModelEntity>()
     private val rightHandEntities = mutableMapOf<HandJointType, GltfModelEntity>()
-
     private lateinit var resourceAsync : Deferred<Unit>
+
+    // State holders for Compose
+    private val _leftHandDebugInfo = mutableStateOf<ThumbsUpDetector.DebugInfo>(ThumbsUpDetector.DebugInfo())
+    val leftHandDebugInfo: State<ThumbsUpDetector.DebugInfo> = _leftHandDebugInfo
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -116,9 +121,9 @@ class ExpHandsActivity : ComponentActivity() {
                 handStateTracking(it, true)
             }
 
-            Hand.right(arCoreSession)?.state?.collect {
-                handStateTracking(it, false)
-            }
+//            Hand.right(arCoreSession)?.state?.collect {
+//                handStateTracking(it, false)
+//            }
         }
     }
 
@@ -145,27 +150,30 @@ class ExpHandsActivity : ComponentActivity() {
 
         SpatialPanel(
             SubspaceModifier
-//                .width(1000.dp)
-//                .height(480.dp)
+                .width(1000.dp)
+                .height(480.dp)
                 .resizable(true)
                 .movable(true)
         ) {
-//            Column(
-//                modifier = Modifier
-//                    .background(Color.White)
-//                    .fillMaxHeight()
-//                    .fillMaxWidth()
-//                    .padding(LocalSpacing.current.l)
-//            ) {
-//                Text(
-//                    modifier = Modifier.padding(LocalSpacing.current.m),
-//                    text = "Detected planes: ${perceptionState?.trackables?.size}"
-//                )
+            Column(
+                modifier = Modifier
+                    .background(Color.White)
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+                    .padding(LocalSpacing.current.l)
+            ) {
+                Text(
+                    modifier = Modifier.padding(LocalSpacing.current.m),
+                    text = "Detected planes: ${perceptionState?.trackables?.size}"
+                )
+                HandGestureDebugVisualization(
+                    leftHandDebugInfo.value
+                )
 //                Row {
 //                    HandTrackingPanel(perceptionState?.leftHand, true)
 //                    HandTrackingPanel(perceptionState?.rightHand, false)
 //                }
-//            }
+            }
         }
     }
 
@@ -199,12 +207,21 @@ class ExpHandsActivity : ComponentActivity() {
     private fun handStateTracking(handState: Hand.State, isLeftHand: Boolean) {
         if (handState.isActive) {
 
-            val isThumbsUp = ThumbsUpDetector.isThumbsUp(handState)
-            if (isThumbsUp) {
+            val result = ThumbsUpDetector.detectThumbsUp(handState)
+
+            // Update the state for Compose
+            _leftHandDebugInfo.value = result.debugInfo
+
+            if (result.isThumbsUp) {
                 // Handle hand thumbs up detected
                 Log.d(TAG, "=================================================================")
                 Log.d(TAG, ">>>>>>>>>>>                 ThumbsUp        <<<<<<<<<<<<<<<<<<<<<")
                 Log.d(TAG, "=================================================================")
+            }
+
+            // Debug visualization
+            result.debugInfo?.let { debug ->
+                logDetailedDebugInfo(debug)
             }
 
             handState.handJoints.forEach { joint ->
@@ -221,6 +238,21 @@ class ExpHandsActivity : ComponentActivity() {
                     rightHandEntities[joint.key]?.setPose(Pose(newPosition, transformedPose.rotation))
             }
         }
+    }
+
+    private fun logDetailedDebugInfo(debug: ThumbsUpDetector.DebugInfo) {
+        Log.d(ThumbsUpDetector.TAG, "=== HAND DEBUG INFO ===")
+        Log.d(ThumbsUpDetector.TAG, "Active: ${debug.isActive}")
+        Log.d(ThumbsUpDetector.TAG, "Has all joints: ${debug.hasAllRequiredJoints}")
+        Log.d(ThumbsUpDetector.TAG, "Thumb pointing up: ${debug.isThumbPointingUp} (alignment: ${debug.thumbUpAlignment})")
+        Log.d(ThumbsUpDetector.TAG, "Thumb extended: ${debug.isThumbExtended} (ratio: ${debug.thumbExtensionRatio})")
+        Log.d(ThumbsUpDetector.TAG, "Finger curl status:")
+        Log.d(ThumbsUpDetector.TAG, "  Index: ${debug.isIndexCurled} (${debug.fingerCurlValues["index"]})")
+        Log.d(ThumbsUpDetector.TAG, "  Middle: ${debug.isMiddleCurled} (${debug.fingerCurlValues["middle"]})")
+        Log.d(ThumbsUpDetector.TAG, "  Ring: ${debug.isRingCurled} (${debug.fingerCurlValues["ring"]})")
+        Log.d(ThumbsUpDetector.TAG, "  Little: ${debug.isLittleCurled} (${debug.fingerCurlValues["little"]})")
+        Log.d(ThumbsUpDetector.TAG, "Up vector: ${debug.upVector}")
+        Log.d(ThumbsUpDetector.TAG, "Thumb vector: ${debug.thumbVector}")
     }
 }
 
