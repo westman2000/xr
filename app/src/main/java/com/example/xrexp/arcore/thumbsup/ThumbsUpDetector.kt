@@ -101,10 +101,18 @@ object ThumbsUpDetector {
         val forwardVecNorm = normalize(forwardVec)
 
         // Side vector (from index metacarpal to thumb metacarpal)
-        val sideVec = createVector(indexMetacarpalPose!!.translation, thumbMetacarpalPose!!.translation)
+        // For right hand: index to thumb direction gives proper side vector
+        // For left hand: need to go from thumb to index to maintain consistent coordinate system
+        val isLeftHand = isLeftHand(joints)
+        val sideVec = if (isLeftHand) {
+            createVector(thumbMetacarpalPose!!.translation, indexMetacarpalPose!!.translation)
+        } else {
+            createVector(indexMetacarpalPose!!.translation, thumbMetacarpalPose!!.translation)
+        }
+        val sideVecNorm = normalize(sideVec)
 
         // Calculate the "up" direction using cross product
-        val upVec = normalize(crossProduct(forwardVecNorm, normalize(sideVec)))
+        val upVec = normalize(crossProduct(forwardVecNorm, sideVecNorm))
 
         // 2. Calculate thumb direction (from metacarpal to tip)
         val thumbVec = createVector(thumbMetacarpalPose.translation, thumbTipPose!!.translation)
@@ -112,7 +120,7 @@ object ThumbsUpDetector {
 
         // 3. Check if thumb is pointing up relative to hand
         val thumbUpAlignment = dotProduct(thumbVecNorm, upVec)
-        val thumbUpThreshold = 0.7f
+        val thumbUpThreshold = 0.45f
         val isThumbPointingUp = thumbUpAlignment > thumbUpThreshold
 
         if (DEBUG) Log.d(TAG, "Thumb up alignment: $thumbUpAlignment (threshold: $thumbUpThreshold)")
@@ -190,6 +198,23 @@ object ThumbsUpDetector {
         }
 
         return Result(isThumbsUp, debugInfo)
+    }
+
+    /**
+     * Determines if this is a left hand based on the relative position of joints
+     */
+    private fun isLeftHand(joints: Map<HandJointType, Pose>): Boolean {
+        val indexMeta = joints[HandJointType.INDEX_METACARPAL]?.translation
+        val littleMeta = joints[HandJointType.LITTLE_METACARPAL]?.translation
+
+        if (indexMeta != null && littleMeta != null) {
+            // In a typical hand pose, if index is to the left of little finger,
+            // it's a right hand, otherwise it's a left hand
+            return indexMeta.x > littleMeta.x
+        }
+
+        // Default to right hand if we can't determine
+        return false
     }
 
     /**
