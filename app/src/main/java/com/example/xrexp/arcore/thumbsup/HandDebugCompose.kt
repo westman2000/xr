@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,26 +15,13 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-import androidx.xr.runtime.math.Vector3
 
 
 /**
@@ -332,187 +318,6 @@ fun FingerCurlVisualization(
                     color = Color.Gray
                 )
             )
-        }
-    }
-}
-
-/**
- * Draw scope extension to draw vectors
- */
-private fun DrawScope.drawVector(
-    center: Offset,
-    vector: Vector3,
-    scale: Float,
-    color: Color,
-    label: String
-) {
-    // Project 3D vector to 2D
-    val end = Offset(
-        center.x + vector.x * scale,
-        center.y - vector.y * scale  // Invert Y for screen coords
-    )
-
-    // Draw the vector as a line
-    drawLine(
-        color = color,
-        start = center,
-        end = end,
-        strokeWidth = 5f,
-        cap = StrokeCap.Round
-    )
-
-    // Draw arrowhead
-    val arrowSize = 10f
-    drawCircle(
-        color = color,
-        radius = arrowSize,
-        center = end
-    )
-}
-
-/**
- * Draw scope extension to draw a simplified hand
- */
-private fun DrawScope.drawHand(
-    center: Offset,
-    scale: Float,
-    isLeftHand: Boolean
-) {
-    val handColor = Color(0xFFE0E0E0)
-    val outlineColor = Color(0xFF9E9E9E)
-    val xDirection = if (isLeftHand) -1 else 1
-
-    // Draw palm
-    drawCircle(
-        color = handColor,
-        radius = scale * 0.5f,
-        center = center,
-        style = Stroke(width = 2f)
-    )
-
-    // Draw wrist line
-    drawLine(
-        color = outlineColor,
-        start = Offset(center.x - scale * 0.4f * xDirection, center.y + scale * 0.4f),
-        end = Offset(center.x + scale * 0.4f * xDirection, center.y + scale * 0.4f),
-        strokeWidth = 3f
-    )
-
-    // Draw thumb (simplified)
-    drawLine(
-        color = outlineColor,
-        start = center,
-        end = Offset(center.x - scale * 0.6f * xDirection, center.y - scale * 0.2f),
-        strokeWidth = 3f
-    )
-
-    // Draw fingers (simplified)
-    val fingerStartY = center.y - scale * 0.2f
-    val fingerEndY = center.y - scale * 0.8f
-
-    // Index
-    drawLine(
-        color = outlineColor,
-        start = Offset(center.x - scale * 0.3f * xDirection, fingerStartY),
-        end = Offset(center.x - scale * 0.3f * xDirection, fingerEndY),
-        strokeWidth = 3f
-    )
-
-    // Middle
-    drawLine(
-        color = outlineColor,
-        start = Offset(center.x - scale * 0.1f * xDirection, fingerStartY),
-        end = Offset(center.x - scale * 0.1f * xDirection, fingerEndY - scale * 0.1f),
-        strokeWidth = 3f
-    )
-
-    // Ring
-    drawLine(
-        color = outlineColor,
-        start = Offset(center.x + scale * 0.1f * xDirection, fingerStartY),
-        end = Offset(center.x + scale * 0.1f * xDirection, fingerEndY - scale * 0.05f),
-        strokeWidth = 3f
-    )
-
-    // Little
-    drawLine(
-        color = outlineColor,
-        start = Offset(center.x + scale * 0.3f * xDirection, fingerStartY),
-        end = Offset(center.x + scale * 0.3f * xDirection, fingerEndY - scale * 0.2f),
-        strokeWidth = 3f
-    )
-}
-
-/**
- * Example usage in your activity or fragment
- */
-@Composable
-fun HandGestureDebugScreen() {
-    // State holders for debug info
-    var leftHandDebugInfo by remember { mutableStateOf<ThumbsUpDetector.DebugInfo?>(null) }
-    var rightHandDebugInfo by remember { mutableStateOf<ThumbsUpDetector.DebugInfo?>(null) }
-
-    // This effect would collect hand tracking data
-    LaunchedEffect(Unit) {
-        // Start collecting from hand tracking
-        // Example:
-        // Hand.left(session).state.collect { leftHandState ->
-        //     val result = ThumbsUpDetector.detectThumbsUp(leftHandState, includeDebugInfo = true)
-        //     leftHandDebugInfo = result.debugInfo
-        // }
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Hand Gesture Debug",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // We create a TabRow to switch between hands
-        var selectedTabIndex by remember { mutableStateOf(0) }
-
-        TabRow(selectedTabIndex = selectedTabIndex) {
-            Tab(
-                selected = selectedTabIndex == 0,
-                onClick = { selectedTabIndex = 0 },
-                text = { Text("Left Hand") }
-            )
-
-            Tab(
-                selected = selectedTabIndex == 1,
-                onClick = { selectedTabIndex = 1 },
-                text = { Text("Right Hand") }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Show the selected hand debug info
-        when (selectedTabIndex) {
-            0 -> {
-                // Left hand
-                leftHandDebugInfo?.let { debugInfo ->
-                    HandGestureDebugVisualization(
-                        debugInfo = debugInfo,
-                    )
-                } ?: Text("No left hand tracking data available")
-            }
-
-            1 -> {
-                // Right hand
-                rightHandDebugInfo?.let { debugInfo ->
-                    HandGestureDebugVisualization(
-                        debugInfo = debugInfo,
-                    )
-                } ?: Text("No right hand tracking data available")
-            }
         }
     }
 }
