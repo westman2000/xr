@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.xr.scenecore.Session
 import androidx.xr.scenecore.setFullSpaceMode
 import com.example.xrexp.Main3DActivity
@@ -15,6 +14,7 @@ import com.example.xrexp.MainEnvironmentActivity
 import com.example.xrexp.MainVideoActivity
 import com.example.xrexp.arcore.ExpArCoreActivity
 import com.example.xrexp.arcore.ExpHandsActivity
+import com.example.xrexp.audio.AudioActivity
 import com.example.xrexp.m3.M3MainActivity
 
 object NavigationManager {
@@ -25,6 +25,11 @@ object NavigationManager {
         ExpActivityInfo(
             activityClass = MainActivity::class.java,
             description = "The main entry point of the app"
+        ),
+        ExpActivityInfo(
+            activityClass = AudioActivity::class.java,
+            description = "Activity to test spatial audio features",
+            isFullSpace = true
         ),
         ExpActivityInfo(
             activityClass = ExpHandsActivity::class.java,
