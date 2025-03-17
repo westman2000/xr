@@ -24,9 +24,7 @@ class AudioActivity : ComponentActivity() {
 
         setContent {
             XRExpTheme {
-                Subspace {
-                    SpatialAudioApp()
-                }
+                SpatialAudioApp()
             }
         }
     }
