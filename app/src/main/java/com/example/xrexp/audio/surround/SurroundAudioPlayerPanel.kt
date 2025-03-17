@@ -1,4 +1,4 @@
-package com.example.xrexp.audio.stereo
+package com.example.xrexp.audio.surround
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -16,9 +16,9 @@ import com.example.xrexp.ui.theme.XRExpTheme
 
 
 @Composable
-fun StereoAudioPlayerPanel(
+fun SurroundAudioPlayerPanel(
     modifier: Modifier = Modifier,
-    viewModel: StereoAudioPlayerViewModel = viewModel()
+    viewModel: SurroundAudioPlayerViewModel = viewModel()
 ) {
     val context = LocalContext.current
 
@@ -116,7 +116,7 @@ fun StereoAudioPlayerPanel(
 fun AudioPlayerPreview() {
     XRExpTheme {
         Surface {
-            StereoAudioPlayerPanel()
+            SurroundAudioPlayerPanel()
         }
     }
 }

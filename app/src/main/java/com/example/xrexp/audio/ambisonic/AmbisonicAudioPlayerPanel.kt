@@ -1,4 +1,4 @@
-package com.example.xrexp.audio.stereo
+package com.example.xrexp.audio.ambisonic
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -16,9 +16,9 @@ import com.example.xrexp.ui.theme.XRExpTheme
 
 
 @Composable
-fun StereoAudioPlayerPanel(
+fun AmbisonicAudioPlayerPanel(
     modifier: Modifier = Modifier,
-    viewModel: StereoAudioPlayerViewModel = viewModel()
+    viewModel: AmbisonicAudioPlayerViewModel = viewModel()
 ) {
     val context = LocalContext.current
 
@@ -116,7 +116,7 @@ fun StereoAudioPlayerPanel(
 fun AudioPlayerPreview() {
     XRExpTheme {
         Surface {
-            StereoAudioPlayerPanel()
+            AmbisonicAudioPlayerPanel()
         }
     }
 }

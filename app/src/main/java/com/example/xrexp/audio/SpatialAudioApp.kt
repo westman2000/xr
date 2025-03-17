@@ -25,8 +25,10 @@ import androidx.xr.compose.subspace.layout.height
 import androidx.xr.compose.subspace.layout.movable
 import androidx.xr.compose.subspace.layout.resizable
 import androidx.xr.compose.subspace.layout.width
+import com.example.xrexp.audio.ambisonic.AmbisonicAudioPlayerPanel
 import com.example.xrexp.audio.positional.PositionalAudioControlPanel
 import com.example.xrexp.audio.stereo.StereoAudioPlayerPanel
+import com.example.xrexp.audio.surround.SurroundAudioPlayerPanel
 import com.example.xrexp.ui.theme.LocalSpacing
 
 
@@ -46,7 +48,7 @@ fun SpatialAudioFrame() {
     SpatialPanel(
         SubspaceModifier
             .width(1280.dp)
-            .height(800.dp)
+            .height(1000.dp)
             .resizable()
             .movable()
     ) {
@@ -54,7 +56,7 @@ fun SpatialAudioFrame() {
             MainContent(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(48.dp)
+                    .padding(LocalSpacing.current.xl)
             )
         }
     }
@@ -98,7 +100,7 @@ fun PositionalAudioCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(LocalSpacing.current.m)
         ) {
             Row {
                 Text(
@@ -121,10 +123,10 @@ fun StereoSoundCard(
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(LocalSpacing.current.m)
         ) {
             Text(
                 text = "Stereo Sound",
@@ -145,10 +147,10 @@ fun SurroundSoundCard(
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(LocalSpacing.current.m)
         ) {
             Text(
                 text = "Surround Sound (5.1 Multi-Channel Audio)",
@@ -157,6 +159,7 @@ fun SurroundSoundCard(
                     fontWeight = FontWeight.Bold
                 )
             )
+            SurroundAudioPlayerPanel()
         }
     }
 }
@@ -168,10 +171,10 @@ fun AmbisonicAudioCard(
     Card(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(LocalSpacing.current.m)
         ) {
             Text(
                 text = "Ambisonic Audio (360° Sound Field)",
@@ -180,6 +183,7 @@ fun AmbisonicAudioCard(
                     fontWeight = FontWeight.Bold
                 )
             )
+            AmbisonicAudioPlayerPanel()
         }
     }
 }
