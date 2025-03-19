@@ -1,3 +1,7 @@
+# !!! DEPRECATED !!!
+
+### This project is deprecated and moved to different location. Actual project is [here](https://github.com/nikolayev-at-google/xr-experiments).
+
 # XRExp
 
 This repository contains an Android Studio project that provides a straightforward example of the
